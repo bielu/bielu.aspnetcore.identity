@@ -14,9 +14,12 @@ Bielu.AspNetCore.Identity.Ldap.Abstractions.LdapEntry.Dn.init -> void
 Bielu.AspNetCore.Identity.Ldap.Abstractions.LdapEntry.GetAttribute(string! name) -> string?
 Bielu.AspNetCore.Identity.Ldap.Abstractions.LdapEntry.LdapEntry() -> void
 Bielu.AspNetCore.Identity.Ldap.Extensions.LdapIdentityServiceCollectionExtensions
-static Bielu.AspNetCore.Identity.Ldap.Extensions.LdapIdentityServiceCollectionExtensions.AddLdapIdentity(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, string sectionName = "Ldap") -> Microsoft.AspNetCore.Identity.IdentityBuilder!
+static Bielu.AspNetCore.Identity.Ldap.Extensions.LdapIdentityServiceCollectionExtensions.AddLdapIdentity(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionName = "Ldap") -> Microsoft.AspNetCore.Identity.IdentityBuilder!
 static Bielu.AspNetCore.Identity.Ldap.Extensions.LdapIdentityServiceCollectionExtensions.AddLdapIdentity(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Bielu.AspNetCore.Identity.Ldap.LdapOptions!>! configureOptions) -> Microsoft.AspNetCore.Identity.IdentityBuilder!
-static Bielu.AspNetCore.Identity.Ldap.Extensions.LdapIdentityServiceCollectionExtensions.AddLdapStores(this Microsoft.AspNetCore.Identity.IdentityBuilder! builder) -> Microsoft.AspNetCore.Identity.IdentityBuilder!
+static Bielu.AspNetCore.Identity.Ldap.Extensions.LdapIdentityServiceCollectionExtensions.AddLdapServices(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionName = "Ldap") -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Bielu.AspNetCore.Identity.Ldap.Extensions.LdapIdentityServiceCollectionExtensions.AddLdapServices(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Bielu.AspNetCore.Identity.Ldap.LdapOptions!>! configureOptions) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Bielu.AspNetCore.Identity.Ldap.Extensions.LdapIdentityServiceCollectionExtensions.AddLdapStores(this Microsoft.AspNetCore.Identity.IdentityBuilder! builder, Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionName = "Ldap") -> Microsoft.AspNetCore.Identity.IdentityBuilder!
+static Bielu.AspNetCore.Identity.Ldap.Extensions.LdapIdentityServiceCollectionExtensions.AddLdapStores(this Microsoft.AspNetCore.Identity.IdentityBuilder! builder, System.Action<Bielu.AspNetCore.Identity.Ldap.LdapOptions!>! configureOptions) -> Microsoft.AspNetCore.Identity.IdentityBuilder!
 Bielu.AspNetCore.Identity.Ldap.LdapOptions
 Bielu.AspNetCore.Identity.Ldap.LdapOptions.BindDn.get -> string?
 Bielu.AspNetCore.Identity.Ldap.LdapOptions.BindDn.set -> void

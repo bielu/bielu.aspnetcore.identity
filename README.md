@@ -13,7 +13,7 @@ Part of the [**bielu ecosystem**](https://github.com/bielu) — a collection of 
 ## Key Features
 
 - ✅ **Drop-in ASP.NET Core Identity stores** — `IUserStore<LdapUser>`, `IRoleStore<LdapRole>`, `IUserPasswordStore`, and `IUserEmailStore` implementations
-- ✅ **Two registration APIs** — bind options from `IConfiguration` (appsettings) or use a fluent `Action<LdapOptions>` delegate
+- ✅ **Composable API** — `AddLdapStores` extends `IdentityBuilder` (like `AddEntityFrameworkStores`), or use `AddLdapServices` for mixed EF + LDAP scenarios
 - ✅ **Cross-platform** — built on [`System.DirectoryServices.Protocols`](https://learn.microsoft.com/dotnet/api/system.directoryservices.protocols), no Windows-only COM or Novell dependencies
 - ✅ **OpenTelemetry instrumentation** — optional package adds tracing spans and metrics counters/histograms to every LDAP operation via the [Scrutor](https://github.com/khellang/Scrutor) decorator pattern
 - ✅ **IOptionsMonitor support** — hot-reload of LDAP settings when using configuration providers with change notifications
@@ -69,21 +69,22 @@ Add the LDAP section to your `appsettings.json`:
 
 ### 2. Register Services
 
-In your `Program.cs`, register the LDAP identity provider:
+The library provides three levels of registration depending on your scenario:
+
+#### Option A — LDAP-only (convenience shortcut)
+
+When LDAP is the **only** identity store, use `AddLdapIdentity` which calls `AddIdentity<LdapUser, LdapRole>()` + `AddLdapStores()` in one call:
 
 ```csharp
 using Bielu.AspNetCore.Identity.Ldap.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Reads from the "Ldap" section by default (LdapOptions.SectionName)
+// Calls AddIdentity + registers LdapOptions, ILdapService, and LDAP stores
 builder.Services.AddLdapIdentity(builder.Configuration);
-
-var app = builder.Build();
-app.Run();
 ```
 
-You can also override the configuration section key:
+You can override the configuration section key:
 
 ```csharp
 builder.Services.AddLdapIdentity(builder.Configuration, sectionName: "MyApp:Directory");
@@ -106,6 +107,94 @@ builder.Services.AddLdapIdentity(options =>
 });
 ```
 
+#### Option B — Build on top of `AddIdentity` (composable)
+
+When you want to control the Identity pipeline yourself — just like `AddEntityFrameworkStores<TContext>()` — use `AddLdapStores` as an extension on `IdentityBuilder`:
+
+```csharp
+using Bielu.AspNetCore.Identity.Ldap;
+using Bielu.AspNetCore.Identity.Ldap.Extensions;
+
+builder.Services
+    .AddIdentity<LdapUser, LdapRole>(options =>
+    {
+        // Configure Identity options (lockout, password rules, etc.)
+        options.SignIn.RequireConfirmedAccount = false;
+    })
+    .AddLdapStores(builder.Configuration);  // registers LdapOptions, ILdapService, and stores
+```
+
+This is the **recommended** pattern when you need to customize Identity options or chain additional Identity extensions.
+
+#### Option C — Mixed stores (EF + LDAP)
+
+When Entity Framework (or another provider) owns the Identity stores and you want to use LDAP only for **credential validation**, use `AddLdapServices` which registers `LdapOptions` and `ILdapService` **without** replacing the Identity stores:
+
+```csharp
+using Bielu.AspNetCore.Identity.Ldap.Abstractions;
+using Bielu.AspNetCore.Identity.Ldap.Extensions;
+
+// EF owns the Identity stores
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+    .AddEntityFrameworkStores<AppDbContext>();
+
+// Register LDAP as a service (no stores — just ILdapService for credential validation)
+builder.Services.AddLdapServices(builder.Configuration);
+```
+
+Then inject `ILdapService` to validate LDAP credentials against your existing EF users:
+
+```csharp
+public class HybridLoginService
+{
+    private readonly ILdapService _ldap;
+    private readonly UserManager<ApplicationUser> _users;
+    private readonly SignInManager<ApplicationUser> _signIn;
+
+    public HybridLoginService(
+        ILdapService ldap,
+        UserManager<ApplicationUser> users,
+        SignInManager<ApplicationUser> signIn)
+    {
+        _ldap = ldap;
+        _users = users;
+        _signIn = signIn;
+    }
+
+    public async Task<SignInResult> LoginAsync(string username, string password)
+    {
+        // Try LDAP first
+        if (await _ldap.ValidateCredentialsAsync(username, password))
+        {
+            // Find or create a local EF user linked to the LDAP account
+            var user = await _users.FindByNameAsync(username);
+            if (user is null)
+            {
+                var ldapEntry = await _ldap.FindUserAsync(username);
+                user = new ApplicationUser
+                {
+                    UserName = username,
+                    Email = ldapEntry?.GetAttribute("mail"),
+                    AuthenticationSource = "LDAP",
+                };
+                await _users.CreateAsync(user);
+            }
+
+            await _signIn.SignInAsync(user, isPersistent: false);
+            return SignInResult.Success;
+        }
+
+        // Fall back to local password
+        return await _signIn.PasswordSignInAsync(username, password, false, false);
+    }
+}
+```
+
+This pattern lets you:
+- Use **EF stores** for local accounts, OpenID Connect external logins, and user management
+- Use **LDAP** for credential validation against a corporate directory
+- Gradually migrate users from LDAP to local accounts
+
 ## Examples
 
 ### Blazor Server / Blazor Web App (Interactive Server)
@@ -122,8 +211,10 @@ using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Register LDAP identity
-builder.Services.AddLdapIdentity(builder.Configuration);
+// 1. Register Identity with LDAP stores (builds on top of AddIdentity)
+builder.Services
+    .AddIdentity<LdapUser, LdapRole>()
+    .AddLdapStores(builder.Configuration);
 
 // 2. Add authentication & authorization
 builder.Services.AddAuthentication(options =>
@@ -258,7 +349,9 @@ using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddLdapIdentity(builder.Configuration);
+builder.Services
+    .AddIdentity<LdapUser, LdapRole>()
+    .AddLdapStores(builder.Configuration);
 
 builder.Services.AddAuthentication(options =>
 {
@@ -326,7 +419,9 @@ using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddLdapIdentity(builder.Configuration);
+builder.Services
+    .AddIdentity<LdapUser, LdapRole>()
+    .AddLdapStores(builder.Configuration);
 builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme)
     .AddCookie(IdentityConstants.ApplicationScheme);
 builder.Services.AddAuthorization();
@@ -426,11 +521,14 @@ For Windows AD, override the default attribute names and filters:
 Add the OpenTelemetry decorator after registering the core LDAP identity provider:
 
 ```csharp
+using Bielu.AspNetCore.Identity.Ldap;
 using Bielu.AspNetCore.Identity.Ldap.Extensions;
 using Bielu.AspNetCore.Identity.Ldap.OpenTelemetry.Extensions;
 
-// 1. Register LDAP identity
-builder.Services.AddLdapIdentity(builder.Configuration);
+// 1. Register Identity with LDAP stores
+builder.Services
+    .AddIdentity<LdapUser, LdapRole>()
+    .AddLdapStores(builder.Configuration);
 
 // 2. Wrap with OpenTelemetry instrumentation (decorator pattern via Scrutor)
 builder.Services.AddLdapOpenTelemetryInstrumentation();
