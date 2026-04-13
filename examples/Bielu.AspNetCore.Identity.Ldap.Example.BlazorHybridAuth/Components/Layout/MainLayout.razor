@@ -1,0 +1,21 @@
+@inherits LayoutComponentBase
+
+<div class="container">
+    <header style="padding: 1rem 0; border-bottom: 1px solid #ddd; margin-bottom: 1.5rem;">
+        <h2>🔐 Bielu Hybrid Auth Example</h2>
+        <nav>
+            <a href="/">Home</a> |
+            <a href="/login">Login</a> |
+            <a href="/register">Register</a> |
+            <a href="/secure">Secure Page</a>
+        </nav>
+    </header>
+
+    <main>
+        @Body
+    </main>
+
+    <footer style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #eee; color: #888; font-size: 0.85rem;">
+        Bielu.AspNetCore.Identity.Ldap — Hybrid Auth Example (Local + LDAP + Entra ID)
+    </footer>
+</div>

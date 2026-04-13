@@ -1,0 +1,39 @@
+@page "/secure"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@attribute [Authorize]
+
+<PageTitle>Secure Page</PageTitle>
+
+<h1>🔒 Secure Page</h1>
+
+<AuthorizeView>
+    <Authorized>
+        <p>Welcome, <strong>@context.User.Identity?.Name</strong>! You are authenticated.</p>
+
+        <table style="border-collapse: collapse; margin-top: 1rem;">
+            <thead>
+                <tr>
+                    <th style="border: 1px solid #ccc; padding: 0.5rem; text-align: left;">Claim Type</th>
+                    <th style="border: 1px solid #ccc; padding: 0.5rem; text-align: left;">Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var claim in context.User.Claims)
+                {
+                    <tr>
+                        <td style="border: 1px solid #ccc; padding: 0.5rem;">@claim.Type</td>
+                        <td style="border: 1px solid #ccc; padding: 0.5rem;">@claim.Value</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <p style="margin-top: 1.5rem;">
+            <a href="/logout" style="color: red;">🚪 Sign out</a>
+        </p>
+    </Authorized>
+    <NotAuthorized>
+        <p>You are not logged in. <a href="/login">Please sign in</a>.</p>
+    </NotAuthorized>
+</AuthorizeView>

@@ -17,6 +17,12 @@
     <PackageVersion Include="System.DirectoryServices.Protocols" Version="10.0.5" />
     <!-- Decorator pattern -->
     <PackageVersion Include="Scrutor" Version="5.0.1" />
+    <!-- EF Core (examples) -->
+    <PackageVersion Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.0" />
+    <!-- OpenID Connect (examples) -->
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.0" />
     <!-- OpenTelemetry -->
     <PackageVersion Include="OpenTelemetry.Api" Version="1.15.2" />
     <!-- Analyzers -->

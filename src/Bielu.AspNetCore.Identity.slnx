@@ -7,6 +7,9 @@
     <Project Path="..\test\Bielu.AspNetCore.Identity.Ldap.Tests\Bielu.AspNetCore.Identity.Ldap.Tests.csproj" />
     <Project Path="..\test\Bielu.AspNetCore.Identity.Ldap.Windows.Tests\Bielu.AspNetCore.Identity.Ldap.Windows.Tests.csproj" />
   </Folder>
+  <Folder Name="/examples/">
+    <Project Path="..\examples\Bielu.AspNetCore.Identity.Ldap.Example.BlazorHybridAuth\Bielu.AspNetCore.Identity.Ldap.Example.BlazorHybridAuth.csproj" />
+  </Folder>
   <Folder Name="/Solution Files/">
     <File Path="../.gitignore" />
     <File Path="../CODEOWNERS" />

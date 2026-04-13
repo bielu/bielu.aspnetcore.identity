@@ -1,0 +1,95 @@
+@page "/login"
+@using Bielu.AspNetCore.Identity.Ldap.Example.BlazorHybridAuth.Services
+@using Microsoft.AspNetCore.Identity
+@inject HybridSignInService HybridSignIn
+@inject NavigationManager Navigation
+
+<PageTitle>Login</PageTitle>
+
+<h1>Login</h1>
+
+<p>Sign in using your <strong>local</strong> or <strong>LDAP</strong> credentials, or use <strong>Microsoft Entra ID</strong>.</p>
+
+@if (!string.IsNullOrEmpty(_error))
+{
+    <div style="color: red; margin-bottom: 1rem;">⚠️ @_error</div>
+}
+
+<div style="display: flex; gap: 2rem; flex-wrap: wrap;">
+    @* ── Local / LDAP login form ──────────────────────────────────── *@
+    <div style="flex: 1; min-width: 300px;">
+        <h3>Username &amp; Password</h3>
+        <p style="color: #666; font-size: 0.9rem;">
+            Tries LDAP first, then falls back to local account.
+        </p>
+
+        <div style="margin-bottom: 0.5rem;">
+            <label>Username</label><br />
+            <input @bind="_username" style="width: 100%; padding: 0.4rem;" />
+        </div>
+        <div style="margin-bottom: 0.5rem;">
+            <label>Password</label><br />
+            <input type="password" @bind="_password" style="width: 100%; padding: 0.4rem;" />
+        </div>
+
+        <button @onclick="LoginAsync" disabled="@_loading" style="padding: 0.5rem 1.5rem;">
+            @(_loading ? "Signing in…" : "Sign in")
+        </button>
+
+        <p style="margin-top: 1rem; font-size: 0.9rem;">
+            Don't have a local account? <a href="/register">Register here</a>.
+        </p>
+    </div>
+
+    @* ── Entra ID (OpenID Connect) ────────────────────────────────── *@
+    <div style="flex: 1; min-width: 300px;">
+        <h3>Microsoft Entra ID</h3>
+        <p style="color: #666; font-size: 0.9rem;">
+            Single sign-on via OpenID Connect.
+        </p>
+
+        <a href="/challenge/EntraId" style="display: inline-block; padding: 0.5rem 1.5rem;
+               background: #0078d4; color: white; text-decoration: none; border-radius: 4px;">
+            🔗 Sign in with Entra ID
+        </a>
+    </div>
+</div>
+
+@code {
+    private string _username = string.Empty;
+    private string _password = string.Empty;
+    private string? _error;
+    private bool _loading;
+
+    private async Task LoginAsync()
+    {
+        _error = null;
+        _loading = true;
+
+        try
+        {
+            var result = await HybridSignIn.PasswordSignInAsync(_username, _password);
+
+            if (result.Succeeded)
+            {
+                Navigation.NavigateTo("/secure", forceLoad: true);
+            }
+            else if (result.IsLockedOut)
+            {
+                _error = "Account is locked out. Please try again later.";
+            }
+            else
+            {
+                _error = "Invalid username or password.";
+            }
+        }
+        catch (Exception ex)
+        {
+            _error = $"An error occurred: {ex.Message}";
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+}
