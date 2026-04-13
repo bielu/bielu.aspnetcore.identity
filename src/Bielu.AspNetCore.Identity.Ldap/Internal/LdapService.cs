@@ -43,6 +43,8 @@ internal sealed class LdapService : ILdapService
         try
         {
             using var connection = CreateConnection();
+            // LdapConnection.Bind is synchronous — no async Bind API exists
+            // in System.DirectoryServices.Protocols. This is unavoidable.
             connection.Bind(new NetworkCredential(userEntry.Dn, password));
             return true;
         }
@@ -152,29 +154,40 @@ internal sealed class LdapService : ILdapService
         return results.Count > 0 ? results[0] : null;
     }
 
-    private Task<IReadOnlyList<LdapEntry>> SearchAsync(
+    private async Task<IReadOnlyList<LdapEntry>> SearchAsync(
         string baseDn,
         string filter,
         CancellationToken cancellationToken,
         SearchScope scope = SearchScope.Subtree)
     {
-        return Task.Run(() =>
+        cancellationToken.ThrowIfCancellationRequested();
+
+        // CreateConnection() performs a synchronous Bind(), but there is no
+        // async Bind API on LdapConnection — this is unavoidable.
+        using var connection = CreateConnection();
+
+        var request = new SearchRequest(baseDn, filter, scope);
+
+        // Use the APM-based BeginSendRequest/EndSendRequest instead of
+        // Task.Run wrapping a synchronous SendRequest. This avoids occupying
+        // a thread-pool thread for the duration of the network round-trip.
+        var response = (SearchResponse)await Task<DirectoryResponse>.Factory
+            .FromAsync(
+                connection.BeginSendRequest(
+                    request,
+                    PartialResultProcessing.NoPartialResultSupport,
+                    null,
+                    null),
+                connection.EndSendRequest)
+            .ConfigureAwait(false);
+
+        var entries = new List<LdapEntry>(response.Entries.Count);
+        foreach (SearchResultEntry entry in response.Entries)
         {
-            cancellationToken.ThrowIfCancellationRequested();
+            entries.Add(MapEntry(entry));
+        }
 
-            using var connection = CreateConnection();
-
-            var request = new SearchRequest(baseDn, filter, scope);
-            var response = (SearchResponse)connection.SendRequest(request);
-
-            var entries = new List<LdapEntry>(response.Entries.Count);
-            foreach (SearchResultEntry entry in response.Entries)
-            {
-                entries.Add(MapEntry(entry));
-            }
-
-            return (IReadOnlyList<LdapEntry>)entries.AsReadOnly();
-        }, cancellationToken);
+        return entries.AsReadOnly();
     }
 
     private static LdapEntry MapEntry(SearchResultEntry entry)
