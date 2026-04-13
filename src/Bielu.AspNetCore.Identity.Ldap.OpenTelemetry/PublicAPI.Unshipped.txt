@@ -1,0 +1,21 @@
+#nullable enable
+Bielu.AspNetCore.Identity.Ldap.OpenTelemetry.Extensions.LdapOpenTelemetryServiceCollectionExtensions
+static Bielu.AspNetCore.Identity.Ldap.OpenTelemetry.Extensions.LdapOpenTelemetryServiceCollectionExtensions.AddLdapIdentityInstrumentation(this OpenTelemetry.Trace.TracerProviderBuilder! builder) -> OpenTelemetry.Trace.TracerProviderBuilder!
+static Bielu.AspNetCore.Identity.Ldap.OpenTelemetry.Extensions.LdapOpenTelemetryServiceCollectionExtensions.AddLdapIdentityMetrics(this OpenTelemetry.Metrics.MeterProviderBuilder! builder) -> OpenTelemetry.Metrics.MeterProviderBuilder!
+static Bielu.AspNetCore.Identity.Ldap.OpenTelemetry.Extensions.LdapOpenTelemetryServiceCollectionExtensions.AddLdapOpenTelemetryInstrumentation(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+Bielu.AspNetCore.Identity.Ldap.OpenTelemetry.Instrumentation.OpenTelemetryLdapServiceDecorator
+Bielu.AspNetCore.Identity.Ldap.OpenTelemetry.Instrumentation.OpenTelemetryLdapServiceDecorator.FindGroupsAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<Bielu.AspNetCore.Identity.Ldap.Abstractions.LdapEntry!>!>!
+Bielu.AspNetCore.Identity.Ldap.OpenTelemetry.Instrumentation.OpenTelemetryLdapServiceDecorator.FindUserAsync(string! username, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Bielu.AspNetCore.Identity.Ldap.Abstractions.LdapEntry?>!
+Bielu.AspNetCore.Identity.Ldap.OpenTelemetry.Instrumentation.OpenTelemetryLdapServiceDecorator.FindUserByDnAsync(string! dn, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Bielu.AspNetCore.Identity.Ldap.Abstractions.LdapEntry?>!
+Bielu.AspNetCore.Identity.Ldap.OpenTelemetry.Instrumentation.OpenTelemetryLdapServiceDecorator.FindUsersAsync(string! filter, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<Bielu.AspNetCore.Identity.Ldap.Abstractions.LdapEntry!>!>!
+Bielu.AspNetCore.Identity.Ldap.OpenTelemetry.Instrumentation.OpenTelemetryLdapServiceDecorator.GetUserGroupsAsync(string! userDn, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<Bielu.AspNetCore.Identity.Ldap.Abstractions.LdapEntry!>!>!
+Bielu.AspNetCore.Identity.Ldap.OpenTelemetry.Instrumentation.OpenTelemetryLdapServiceDecorator.OpenTelemetryLdapServiceDecorator(Bielu.AspNetCore.Identity.Ldap.Abstractions.ILdapService! inner) -> void
+Bielu.AspNetCore.Identity.Ldap.OpenTelemetry.Instrumentation.OpenTelemetryLdapServiceDecorator.ValidateCredentialsAsync(string! username, string! password, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<bool>!
+Bielu.AspNetCore.Identity.Ldap.OpenTelemetry.LdapActivitySource
+static Bielu.AspNetCore.Identity.Ldap.OpenTelemetry.LdapActivitySource.Name -> string!
+static Bielu.AspNetCore.Identity.Ldap.OpenTelemetry.LdapActivitySource.Source -> System.Diagnostics.ActivitySource!
+static Bielu.AspNetCore.Identity.Ldap.OpenTelemetry.LdapActivitySource.Version -> string!
+Bielu.AspNetCore.Identity.Ldap.OpenTelemetry.LdapMetrics
+static Bielu.AspNetCore.Identity.Ldap.OpenTelemetry.LdapMetrics.Meter -> System.Diagnostics.Metrics.Meter!
+static Bielu.AspNetCore.Identity.Ldap.OpenTelemetry.LdapMetrics.Name -> string!
+static Bielu.AspNetCore.Identity.Ldap.OpenTelemetry.LdapMetrics.Version -> string!
