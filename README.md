@@ -1,35 +1,29 @@
 # Bielu.AspNetCore.Identity.Ldap
 
-ASP.NET Core Identity provider for **LDAP** directories — authenticate users and resolve roles directly against any LDAP-compatible server (OpenLDAP, Active Directory, 389 Directory Server, etc.) without a local database.
+[![NuGet](https://img.shields.io/nuget/v/Bielu.AspNetCore.Identity.Ldap.svg)](https://www.nuget.org/packages/Bielu.AspNetCore.Identity.Ldap/)
+[![NuGet Downloads](https://img.shields.io/nuget/dt/Bielu.AspNetCore.Identity.Ldap.svg)](https://www.nuget.org/packages/Bielu.AspNetCore.Identity.Ldap/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Built on [`System.DirectoryServices.Protocols`](https://learn.microsoft.com/dotnet/api/system.directoryservices.protocols) for **cross-platform** support (Windows, Linux, macOS) — no Novell dependency required.
+Bielu.AspNetCore.Identity.Ldap is an ASP.NET Core Identity provider for **LDAP** directories. Authenticate users and resolve roles directly against any LDAP-compatible server (OpenLDAP, Active Directory, 389 Directory Server, etc.) without a local database.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+Part of the [**bielu ecosystem**](https://github.com/bielu) — a collection of open-source .NET libraries for search, messaging, observability, and infrastructure.
 
----
+> ⚠️ **Note:** Pre version 1.0.0, the API is regarded as unstable and **breaking changes may be introduced**.
 
-## Features
+## Key Features
 
-- **ASP.NET Core Identity stores** — drop-in `IUserStore<LdapUser>` and `IRoleStore<LdapRole>` implementations.
-- **Two registration APIs** — bind options from `IConfiguration` (appsettings) **or** use a fluent `Action<LdapOptions>` delegate.
-- **Overridable configuration section key** — defaults to `"Ldap"` (`LdapOptions.SectionName`), but callers can pass any section name.
-- **OpenTelemetry instrumentation** — optional package adds tracing spans and metrics counters/histograms to every LDAP operation.
-- **Cross-platform** — uses `System.DirectoryServices.Protocols` (no Windows-only COM dependencies).
-- **IOptionsMonitor** — supports hot-reload of LDAP settings when using configuration providers that support change notifications.
-- **Static analysis** — uses `Bielu.StaticCode.Analyzers`, `Microsoft.CodeAnalysis.PublicApiAnalyzers`, and `Microsoft.VisualStudio.Threading.Analyzers`.
-
----
-
-## Packages
-
-| Package | Description |
-|---|---|
-| `Bielu.AspNetCore.Identity.Ldap` | Core identity stores, `ILdapService`, models, and DI registration |
-| `Bielu.AspNetCore.Identity.Ldap.OpenTelemetry` | OpenTelemetry tracing & metrics decorator for LDAP operations |
-
----
+- ✅ **Drop-in ASP.NET Core Identity stores** — `IUserStore<LdapUser>`, `IRoleStore<LdapRole>`, `IUserPasswordStore`, and `IUserEmailStore` implementations
+- ✅ **Two registration APIs** — bind options from `IConfiguration` (appsettings) or use a fluent `Action<LdapOptions>` delegate
+- ✅ **Cross-platform** — built on [`System.DirectoryServices.Protocols`](https://learn.microsoft.com/dotnet/api/system.directoryservices.protocols), no Windows-only COM or Novell dependencies
+- ✅ **OpenTelemetry instrumentation** — optional package adds tracing spans and metrics counters/histograms to every LDAP operation via the [Scrutor](https://github.com/khellang/Scrutor) decorator pattern
+- ✅ **IOptionsMonitor support** — hot-reload of LDAP settings when using configuration providers with change notifications
+- ✅ **Overridable configuration section key** — defaults to `"Ldap"` (`LdapOptions.SectionName`), callers can pass any section name
+- ✅ **Blazor compatible** — works with Blazor Server, Blazor WebAssembly (hosted), and Blazor Web App (interactive server)
+- ✅ **Static analysis** — enforced via [Bielu.StaticCode.Analyzers](https://github.com/bielu/bielu.staticcode.analyzers), `Microsoft.CodeAnalysis.PublicApiAnalyzers`, and `Microsoft.VisualStudio.Threading.Analyzers`
 
 ## Installation
+
+Install the packages from NuGet:
 
 ```bash
 # Core package
@@ -39,11 +33,16 @@ dotnet add package Bielu.AspNetCore.Identity.Ldap
 dotnet add package Bielu.AspNetCore.Identity.Ldap.OpenTelemetry
 ```
 
----
+## Packages
 
-## Quick Start
+| Package | Description |
+|---------|-------------|
+| `Bielu.AspNetCore.Identity.Ldap` | Core identity stores, `ILdapService`, models, and DI registration |
+| `Bielu.AspNetCore.Identity.Ldap.OpenTelemetry` | OpenTelemetry tracing & metrics decorator for LDAP operations |
 
-### Option 1 — Bind from `appsettings.json` (recommended)
+## Getting Started
+
+### 1. Configure `appsettings.json`
 
 Add the LDAP section to your `appsettings.json`:
 
@@ -68,7 +67,9 @@ Add the LDAP section to your `appsettings.json`:
 }
 ```
 
-Register the LDAP identity provider in `Program.cs`:
+### 2. Register Services
+
+In your `Program.cs`, register the LDAP identity provider:
 
 ```csharp
 using Bielu.AspNetCore.Identity.Ldap.Extensions;
@@ -77,20 +78,20 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Reads from the "Ldap" section by default (LdapOptions.SectionName)
 builder.Services.AddLdapIdentity(builder.Configuration);
+
+var app = builder.Build();
+app.Run();
 ```
 
 You can also override the configuration section key:
 
 ```csharp
-// Bind from a custom section path
 builder.Services.AddLdapIdentity(builder.Configuration, sectionName: "MyApp:Directory");
 ```
 
-### Option 2 — Fluent API
+Or use the fluent API:
 
 ```csharp
-using Bielu.AspNetCore.Identity.Ldap.Extensions;
-
 builder.Services.AddLdapIdentity(options =>
 {
     options.Host = "ldap.example.com";
@@ -105,14 +106,276 @@ builder.Services.AddLdapIdentity(options =>
 });
 ```
 
----
+## Examples
+
+### Blazor Server / Blazor Web App (Interactive Server)
+
+A complete Blazor Server example with LDAP authentication, `AuthenticationStateProvider`, and role-based `[Authorize]`:
+
+**Program.cs:**
+
+```csharp
+using Bielu.AspNetCore.Identity.Ldap;
+using Bielu.AspNetCore.Identity.Ldap.Extensions;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// 1. Register LDAP identity
+builder.Services.AddLdapIdentity(builder.Configuration);
+
+// 2. Add authentication & authorization
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = IdentityConstants.ApplicationScheme;
+    options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+})
+.AddCookie(IdentityConstants.ApplicationScheme);
+
+builder.Services.AddAuthorization();
+builder.Services.AddCascadingAuthenticationState();
+
+// 3. Add Blazor services
+builder.Services.AddRazorComponents()
+    .AddInteractiveServerComponents();
+
+var app = builder.Build();
+
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseAntiforgery();
+
+app.MapRazorComponents<App>()
+    .AddInteractiveServerRenderMode();
+
+app.Run();
+```
+
+**Components/Pages/Login.razor:**
+
+```razor
+@page "/login"
+@using Bielu.AspNetCore.Identity.Ldap
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<LdapUser> SignInManager
+@inject NavigationManager Navigation
+
+<PageTitle>Login</PageTitle>
+
+<h3>LDAP Login</h3>
+
+<EditForm Model="@loginModel" OnValidSubmit="HandleLogin" FormName="login">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label>Username</label>
+        <InputText @bind-Value="loginModel.Username" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label>Password</label>
+        <InputText @bind-Value="loginModel.Password" type="password" class="form-control" />
+    </div>
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger">@errorMessage</div>
+    }
+
+    <button type="submit" class="btn btn-primary">Sign In</button>
+</EditForm>
+
+@code {
+    private LoginModel loginModel = new();
+    private string? errorMessage;
+
+    private async Task HandleLogin()
+    {
+        var result = await SignInManager.PasswordSignInAsync(
+            loginModel.Username, loginModel.Password,
+            isPersistent: false, lockoutOnFailure: false);
+
+        if (result.Succeeded)
+        {
+            Navigation.NavigateTo("/", forceLoad: true);
+        }
+        else
+        {
+            errorMessage = "Invalid username or password.";
+        }
+    }
+
+    private sealed class LoginModel
+    {
+        public string Username { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+    }
+}
+```
+
+**Components/Pages/SecurePage.razor:**
+
+```razor
+@page "/secure"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+
+<PageTitle>Secure Page</PageTitle>
+
+<h3>Welcome, @context.User.Identity?.Name!</h3>
+<p>You are authenticated via LDAP.</p>
+
+<AuthorizeView Roles="Administrators">
+    <Authorized>
+        <p>🔑 You have the <strong>Administrators</strong> role.</p>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState> authStateTask { get; set; } = default!;
+
+    private AuthenticationState context = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        context = await authStateTask;
+    }
+}
+```
+
+### Blazor WebAssembly (Hosted)
+
+For Blazor WASM with a hosted ASP.NET Core backend, register LDAP identity on the **server** project and expose an authentication API:
+
+**Server/Program.cs:**
+
+```csharp
+using Bielu.AspNetCore.Identity.Ldap;
+using Bielu.AspNetCore.Identity.Ldap.Extensions;
+using Microsoft.AspNetCore.Identity;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddLdapIdentity(builder.Configuration);
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = IdentityConstants.ApplicationScheme;
+})
+.AddCookie(IdentityConstants.ApplicationScheme);
+
+builder.Services.AddAuthorization();
+
+var app = builder.Build();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+// Minimal API login endpoint for the WASM client
+app.MapPost("/api/login", async (
+    LoginRequest request,
+    SignInManager<LdapUser> signInManager) =>
+{
+    var result = await signInManager.PasswordSignInAsync(
+        request.Username, request.Password,
+        isPersistent: false, lockoutOnFailure: false);
+
+    return result.Succeeded
+        ? Results.Ok()
+        : Results.Unauthorized();
+});
+
+app.MapPost("/api/logout", async (SignInManager<LdapUser> signInManager) =>
+{
+    await signInManager.SignOutAsync();
+    return Results.Ok();
+});
+
+app.MapGet("/api/me", (HttpContext context) =>
+{
+    if (context.User.Identity?.IsAuthenticated != true)
+        return Results.Unauthorized();
+
+    return Results.Ok(new
+    {
+        Name = context.User.Identity.Name,
+        Roles = context.User.Claims
+            .Where(c => c.Type == System.Security.Claims.ClaimTypes.Role)
+            .Select(c => c.Value)
+    });
+}).RequireAuthorization();
+
+app.MapRazorPages();
+app.MapFallbackToFile("index.html");
+
+app.Run();
+
+record LoginRequest(string Username, string Password);
+```
+
+### Minimal API
+
+A simple Minimal API example for non-Blazor scenarios:
+
+```csharp
+using Bielu.AspNetCore.Identity.Ldap;
+using Bielu.AspNetCore.Identity.Ldap.Extensions;
+using Microsoft.AspNetCore.Identity;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddLdapIdentity(builder.Configuration);
+builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme)
+    .AddCookie(IdentityConstants.ApplicationScheme);
+builder.Services.AddAuthorization();
+
+var app = builder.Build();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapPost("/login", async (LoginRequest req, SignInManager<LdapUser> signIn) =>
+{
+    var result = await signIn.PasswordSignInAsync(
+        req.Username, req.Password, false, false);
+    return result.Succeeded ? Results.Ok() : Results.Unauthorized();
+});
+
+app.MapGet("/me", (HttpContext ctx) => Results.Ok(new
+{
+    Name = ctx.User.Identity?.Name
+})).RequireAuthorization();
+
+app.Run();
+
+record LoginRequest(string Username, string Password);
+```
+
+## Main Types
+
+The main types provided by this library are:
+
+| Type | Description |
+|------|-------------|
+| `LdapOptions` | Configuration options for LDAP connection, search bases, filters, and attribute mappings |
+| `LdapUser` | ASP.NET Core Identity user backed by an LDAP entry (`IdentityUser` subclass) |
+| `LdapRole` | ASP.NET Core Identity role backed by an LDAP group (`IdentityRole` subclass) |
+| `LdapEntry` | Lightweight, read-only representation of an LDAP directory entry |
+| `ILdapService` | High-level LDAP operations: credential validation, user/group search |
+| `LdapUserStore` | `IUserStore<LdapUser>`, `IUserPasswordStore`, `IUserEmailStore` implementation |
+| `LdapRoleStore` | `IRoleStore<LdapRole>` implementation |
+| `OpenTelemetryLdapServiceDecorator` | `ILdapService` decorator adding tracing and metrics |
+| `LdapActivitySource` | `ActivitySource` and span name constants for tracing |
+| `LdapMetrics` | `Meter`, counters, and histograms for LDAP metrics |
 
 ## Configuration Reference
 
 All properties live on `LdapOptions`:
 
 | Property | Type | Default | Description |
-|---|---|---|---|
+|----------|------|---------|-------------|
 | `Host` | `string` | `"localhost"` | LDAP server hostname or IP |
 | `Port` | `int` | `389` | LDAP port (`389` plain, `636` SSL) |
 | `UsesSsl` | `bool` | `false` | Use SSL/TLS |
@@ -133,8 +396,6 @@ The default section key is exposed as a constant:
 ```csharp
 public const string SectionName = "Ldap"; // LdapOptions.SectionName
 ```
-
----
 
 ## Windows Active Directory
 
@@ -159,8 +420,6 @@ For Windows AD, override the default attribute names and filters:
   }
 }
 ```
-
----
 
 ## OpenTelemetry Instrumentation
 
@@ -189,7 +448,7 @@ builder.Services.AddOpenTelemetry()
 ### Exported Metrics
 
 | Metric | Type | Unit | Description |
-|---|---|---|---|
+|--------|------|------|-------------|
 | `ldap.identity.authentication.attempts` | Counter | — | Total authentication attempts |
 | `ldap.identity.authentication.successes` | Counter | — | Successful authentications |
 | `ldap.identity.authentication.failures` | Counter | — | Failed authentications |
@@ -201,7 +460,7 @@ builder.Services.AddOpenTelemetry()
 ### Trace Spans
 
 | Operation | Span Name |
-|---|---|
+|-----------|-----------|
 | Credential validation | `ldap.validate_credentials` |
 | Find user by username | `ldap.find_user` |
 | Find user by DN | `ldap.find_user_by_dn` |
@@ -211,8 +470,6 @@ builder.Services.AddOpenTelemetry()
 
 Span attributes include `ldap.username`, `ldap.user_dn`, and `ldap.result_count` where applicable.
 
----
-
 ## Testing
 
 ### Unit Tests
@@ -221,7 +478,7 @@ Span attributes include `ldap.username`, `ldap.user_dn`, and `ldap.result_count`
 dotnet test test/Bielu.AspNetCore.Identity.Ldap.Tests
 ```
 
-51 unit tests cover:
+Unit tests cover:
 - `LdapOptions` — defaults, section name constant, property assignment
 - `LdapEntry` — case-insensitive attribute lookup, null guards
 - `LdapUserStore` / `LdapRoleStore` — find, create, update, delete contract
@@ -245,8 +502,6 @@ dotnet test test/Bielu.AspNetCore.Identity.Ldap.Windows.Tests
 ```
 
 Configuration is loaded from `appsettings.Integration.json` with `LDAP_` environment variable overrides.
-
----
 
 ## Project Structure
 
@@ -278,10 +533,28 @@ Configuration is loaded from `appsettings.Integration.json` with `LDAP_` environ
 └── LICENSE                      # MIT License
 ```
 
----
+## Contributing
+
+We welcome contributions! Feel free to get involved by opening issues or submitting pull requests.
+
+## Related Bielu Projects
+
+| Project | Description |
+|---------|-------------|
+| [**Bielu.StaticCode.Analyzers**](https://github.com/bielu/bielu.staticcode.analyzers) | Static analysis rules used across bielu packages |
+| [**Bielu.AspNetCore.AsyncApi**](https://github.com/bielu/Bielu.AspNetCore.AsyncApi) | Code-first AsyncAPI documentation generator for .NET |
+| [**Bielu.PersistentQueues**](https://github.com/bielu/Bielu.PersistentQueues) | Fast persistent queues for .NET |
+| [**Bielu.Common.Libraries**](https://github.com/bielu/Bielu.Common.Libraries) | Shared utilities and abstractions for the bielu ecosystem |
+
+## Acknowledgments
+
+This project builds upon:
+
+- **[ASP.NET Core Identity](https://github.com/dotnet/aspnetcore)** — Microsoft's pluggable authentication and authorization framework
+- **[System.DirectoryServices.Protocols](https://learn.microsoft.com/dotnet/api/system.directoryservices.protocols)** — Microsoft's cross-platform LDAP client
+- **[Scrutor](https://github.com/khellang/Scrutor)** — Assembly scanning and decoration extensions for `IServiceCollection`
+- **[OpenTelemetry .NET](https://github.com/open-telemetry/opentelemetry-dotnet)** — Observability framework for traces and metrics
 
 ## License
 
-This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
-
-Copyright © 2026 Arkadiusz Biel
+This project is licensed under the MIT License — see the [LICENSE](./LICENSE) file for details.
