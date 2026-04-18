@@ -35,8 +35,14 @@ public class LdapCredentialValidationTests
     {
         _fixture.SkipIfUnavailable();
 
+        // Use a dedicated account for bad-password tests to avoid incrementing
+        // the bad-password counter and risking lockout on the primary test account.
+        var badPwdUser = !string.IsNullOrEmpty(_fixture.Settings.Integration.BadPasswordTestUsername)
+            ? _fixture.Settings.Integration.BadPasswordTestUsername
+            : _fixture.Settings.Integration.TestUsername;
+
         var result = await _fixture.LdapService.ValidateCredentialsAsync(
-            _fixture.Settings.Integration.TestUsername,
+            badPwdUser,
             "definitely-wrong-password-that-will-never-match-1234");
 
         result.ShouldBeFalse();

@@ -79,10 +79,12 @@ public class LdapRoleStoreTests
 
         var store = new LdapRoleStore(service, CreateOptionsMonitor(DefaultOptions()));
 
-        var role = await store.FindByIdAsync("developers", CancellationToken.None);
+        // Role ID is the DN
+        var role = await store.FindByIdAsync("cn=developers,ou=groups,dc=example,dc=com", CancellationToken.None);
 
         role.ShouldNotBeNull();
         role.Name.ShouldBe("developers");
+        role.Id.ShouldBe("cn=developers,ou=groups,dc=example,dc=com");
     }
 
     // -----------------------------------------------------------------------

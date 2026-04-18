@@ -31,4 +31,12 @@ public sealed class IntegrationTestValues
 
     /// <summary>Name of an existing group in the directory.</summary>
     public string TestGroupName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Username of a dedicated account used only for invalid-password tests.
+    /// This avoids incrementing the bad-password counter and risking lockout
+    /// on the primary <see cref="TestUsername"/> account.
+    /// Falls back to <see cref="TestUsername"/> if not set.
+    /// </summary>
+    public string BadPasswordTestUsername { get; set; } = string.Empty;
 }

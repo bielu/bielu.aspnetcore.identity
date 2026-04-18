@@ -32,7 +32,7 @@ public sealed class OpenTelemetryLdapServiceDecorator : ILdapService
         activity?.SetTag(LdapActivitySource.AttributeUsername, username);
 
         var sw = Stopwatch.StartNew();
-        LdapMetrics.AuthenticationAttempts.Add(1, new KeyValuePair<string, object?>("ldap.username", username));
+        LdapMetrics.AuthenticationAttempts.Add(1);
 
         try
         {

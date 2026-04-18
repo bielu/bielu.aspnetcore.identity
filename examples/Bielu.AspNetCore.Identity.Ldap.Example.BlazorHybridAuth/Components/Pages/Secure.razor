@@ -29,9 +29,12 @@
             </tbody>
         </table>
 
-        <p style="margin-top: 1.5rem;">
-            <a href="/logout" style="color: red;">🚪 Sign out</a>
-        </p>
+        <form method="post" action="/logout" style="margin-top: 1.5rem;">
+            <AntiforgeryToken />
+            <button type="submit" style="background: none; border: none; color: red; cursor: pointer; font-size: inherit;">
+                🚪 Sign out
+            </button>
+        </form>
     </Authorized>
     <NotAuthorized>
         <p>You are not logged in. <a href="/login">Please sign in</a>.</p>

@@ -6,6 +6,9 @@ namespace Bielu.AspNetCore.Identity.Ldap.Abstractions;
 /// </summary>
 public sealed class LdapEntry
 {
+    private IReadOnlyDictionary<string, IReadOnlyList<string>> _attributes =
+        new Dictionary<string, IReadOnlyList<string>>(StringComparer.OrdinalIgnoreCase);
+
     /// <summary>
     /// The Distinguished Name of the LDAP entry.
     /// </summary>
@@ -14,9 +17,27 @@ public sealed class LdapEntry
     /// <summary>
     /// All attributes returned for this entry, keyed by attribute name.
     /// Each attribute may have multiple values.
+    /// The dictionary uses case-insensitive key comparison; if a caller assigns a
+    /// case-sensitive dictionary, it is automatically wrapped to preserve
+    /// case-insensitive lookups.
     /// </summary>
-    public IReadOnlyDictionary<string, IReadOnlyList<string>> Attributes { get; init; }
-        = new Dictionary<string, IReadOnlyList<string>>(StringComparer.OrdinalIgnoreCase);
+    public IReadOnlyDictionary<string, IReadOnlyList<string>> Attributes
+    {
+        get => _attributes;
+        init
+        {
+            // Ensure case-insensitive lookup regardless of the supplied dictionary.
+            if (value is Dictionary<string, IReadOnlyList<string>> dict &&
+                dict.Comparer == StringComparer.OrdinalIgnoreCase)
+            {
+                _attributes = value;
+            }
+            else
+            {
+                _attributes = new Dictionary<string, IReadOnlyList<string>>(value, StringComparer.OrdinalIgnoreCase);
+            }
+        }
+    }
 
     /// <summary>
     /// Returns the first value of the named attribute, or <c>null</c> if the attribute

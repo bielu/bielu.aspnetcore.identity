@@ -177,7 +177,11 @@ public class HybridLoginService
                     Email = ldapEntry?.GetAttribute("mail"),
                     AuthenticationSource = "LDAP",
                 };
-                await _users.CreateAsync(user);
+                var createResult = await _users.CreateAsync(user);
+                if (!createResult.Succeeded)
+                {
+                    return SignInResult.Failed;
+                }
             }
 
             await _signIn.SignInAsync(user, isPersistent: false);
@@ -591,15 +595,15 @@ Integration tests connect to a **real** Windows Active Directory server. They ar
 # Set the opt-in flag
 export LDAP_INTEGRATION=true
 
-# Override credentials via environment variables (LDAP_ prefix)
-export LDAP_Host=dc.corp.example.com
-export LDAP_BindDn="CN=ServiceAccount,CN=Users,DC=corp,DC=example,DC=com"
-export LDAP_BindPassword="password"
+# Override credentials via environment variables (use __ for nesting)
+export Ldap__Host=dc.corp.example.com
+export Ldap__BindDn="CN=ServiceAccount,CN=Users,DC=corp,DC=example,DC=com"
+export Ldap__BindPassword="password"
 
 dotnet test test/Bielu.AspNetCore.Identity.Ldap.Windows.Tests
 ```
 
-Configuration is loaded from `appsettings.Integration.json` with `LDAP_` environment variable overrides.
+Configuration is loaded from `appsettings.Integration.json` with standard `__`-separated environment variable overrides (e.g. `Ldap__Host`, `Integration__TestUsername`).
 
 ## Project Structure
 

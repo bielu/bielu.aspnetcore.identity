@@ -170,16 +170,30 @@ internal sealed class LdapService : ILdapService
         // Use the APM-based BeginSendRequest/EndSendRequest instead of
         // Task.Run wrapping a synchronous SendRequest. This avoids occupying
         // a thread-pool thread for the duration of the network round-trip.
-        var response = (SearchResponse)await Task<DirectoryResponse>.Factory
-            .FromAsync(
-                connection.BeginSendRequest(
-                    request,
-                    PartialResultProcessing.NoPartialResultSupport,
-                    null,
-                    null),
-                connection.EndSendRequest)
-            .WaitAsync(cancellationToken)
-            .ConfigureAwait(false);
+        //
+        // Register a cancellation callback to dispose the connection so the
+        // underlying LDAP request is aborted instead of continuing silently.
+        using var ctr = cancellationToken.Register(() => connection.Dispose());
+
+        SearchResponse response;
+        try
+        {
+            response = (SearchResponse)await Task<DirectoryResponse>.Factory
+                .FromAsync(
+                    connection.BeginSendRequest(
+                        request,
+                        PartialResultProcessing.NoPartialResultSupport,
+                        null,
+                        null),
+                    connection.EndSendRequest)
+                .WaitAsync(cancellationToken)
+                .ConfigureAwait(false);
+        }
+        catch (ObjectDisposedException) when (cancellationToken.IsCancellationRequested)
+        {
+            // The connection was disposed by the cancellation callback.
+            throw new OperationCanceledException(cancellationToken);
+        }
 
         var entries = new List<LdapEntry>(response.Entries.Count);
         foreach (SearchResultEntry entry in response.Entries)
@@ -207,7 +221,7 @@ internal sealed class LdapService : ILdapService
                 }
                 else if (attr[i] is byte[] bytes)
                 {
-                    values.Add(System.Text.Encoding.UTF8.GetString(bytes));
+                    values.Add(Convert.ToBase64String(bytes));
                 }
             }
 

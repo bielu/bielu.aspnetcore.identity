@@ -61,9 +61,10 @@ public sealed class LdapRoleStore : IRoleStore<LdapRole>
     {
         ArgumentNullException.ThrowIfNull(roleId);
 
+        // Role IDs are stored as Distinguished Names for uniqueness.
         var entries = await _ldapService.FindGroupsAsync(cancellationToken).ConfigureAwait(false);
         var entry = entries.FirstOrDefault(e =>
-            string.Equals(e.GetAttribute(_optionsMonitor.CurrentValue.GroupNameAttribute), roleId, StringComparison.OrdinalIgnoreCase));
+            string.Equals(e.Dn, roleId, StringComparison.OrdinalIgnoreCase));
 
         return entry is null ? null : MapToRole(entry);
     }
@@ -151,7 +152,7 @@ public sealed class LdapRoleStore : IRoleStore<LdapRole>
         var name = entry.GetAttribute(_optionsMonitor.CurrentValue.GroupNameAttribute) ?? entry.Dn;
         return new LdapRole(name)
         {
-            Id = name,
+            Id = entry.Dn,
             NormalizedName = name.ToUpperInvariant(),
             DistinguishedName = entry.Dn,
         };

@@ -173,7 +173,7 @@ public sealed class LdapUserStore : IUserStore<LdapUser>,
             System.Globalization.CultureInfo.InvariantCulture,
             "(&(objectClass=person)({0}={1}))",
             _optionsMonitor.CurrentValue.EmailAttribute,
-            LdapFilterHelper.EscapeLdapFilter(normalizedEmail.ToLowerInvariant()));
+            LdapFilterHelper.EscapeLdapFilter(normalizedEmail));
 
         var entries = await _ldapService.FindUsersAsync(filter, cancellationToken).ConfigureAwait(false);
         return entries.Count > 0 ? MapToUser(entries[0]) : null;

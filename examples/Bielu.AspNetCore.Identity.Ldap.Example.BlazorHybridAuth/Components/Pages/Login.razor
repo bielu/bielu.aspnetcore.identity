@@ -1,7 +1,4 @@
 @page "/login"
-@using Bielu.AspNetCore.Identity.Ldap.Example.BlazorHybridAuth.Services
-@using Microsoft.AspNetCore.Identity
-@inject HybridSignInService HybridSignIn
 @inject NavigationManager Navigation
 
 <PageTitle>Login</PageTitle>
@@ -23,18 +20,24 @@
             Tries LDAP first, then falls back to local account.
         </p>
 
-        <div style="margin-bottom: 0.5rem;">
-            <label>Username</label><br />
-            <input @bind="_username" style="width: 100%; padding: 0.4rem;" />
-        </div>
-        <div style="margin-bottom: 0.5rem;">
-            <label>Password</label><br />
-            <input type="password" @bind="_password" style="width: 100%; padding: 0.4rem;" />
-        </div>
+        @* Login is handled via a POST endpoint because interactive Blazor Server
+           components cannot set authentication cookies from @onclick handlers. *@
+        <form method="post" action="/login">
+            <AntiforgeryToken />
 
-        <button @onclick="LoginAsync" disabled="@_loading" style="padding: 0.5rem 1.5rem;">
-            @(_loading ? "Signing in…" : "Sign in")
-        </button>
+            <div style="margin-bottom: 0.5rem;">
+                <label>Username</label><br />
+                <input name="username" style="width: 100%; padding: 0.4rem;" />
+            </div>
+            <div style="margin-bottom: 0.5rem;">
+                <label>Password</label><br />
+                <input type="password" name="password" style="width: 100%; padding: 0.4rem;" />
+            </div>
+
+            <button type="submit" style="padding: 0.5rem 1.5rem;">
+                Sign in
+            </button>
+        </form>
 
         <p style="margin-top: 1rem; font-size: 0.9rem;">
             Don't have a local account? <a href="/register">Register here</a>.
@@ -56,40 +59,16 @@
 </div>
 
 @code {
-    private string _username = string.Empty;
-    private string _password = string.Empty;
     private string? _error;
-    private bool _loading;
 
-    private async Task LoginAsync()
+    protected override void OnInitialized()
     {
-        _error = null;
-        _loading = true;
-
-        try
+        // Read error from query string (set by the POST /login endpoint on failure)
+        var uri = Navigation.ToAbsoluteUri(Navigation.Uri);
+        if (Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query)
+                .TryGetValue("error", out var errorValue))
         {
-            var result = await HybridSignIn.PasswordSignInAsync(_username, _password);
-
-            if (result.Succeeded)
-            {
-                Navigation.NavigateTo("/secure", forceLoad: true);
-            }
-            else if (result.IsLockedOut)
-            {
-                _error = "Account is locked out. Please try again later.";
-            }
-            else
-            {
-                _error = "Invalid username or password.";
-            }
-        }
-        catch (Exception ex)
-        {
-            _error = $"An error occurred: {ex.Message}";
-        }
-        finally
-        {
-            _loading = false;
+            _error = errorValue.ToString();
         }
     }
 }

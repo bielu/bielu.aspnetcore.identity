@@ -1,11 +1,9 @@
 using System.DirectoryServices.Protocols;
 using Bielu.AspNetCore.Identity.Ldap.Abstractions;
 using Bielu.AspNetCore.Identity.Ldap.Extensions;
-using Bielu.AspNetCore.Identity.Ldap.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Bielu.AspNetCore.Identity.Ldap.Windows.Tests;
 
