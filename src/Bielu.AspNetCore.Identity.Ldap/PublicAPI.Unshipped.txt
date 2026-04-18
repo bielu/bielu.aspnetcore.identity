@@ -1,0 +1,104 @@
+#nullable enable
+Bielu.AspNetCore.Identity.Ldap.Abstractions.ILdapService
+Bielu.AspNetCore.Identity.Ldap.Abstractions.ILdapService.FindGroupsAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<Bielu.AspNetCore.Identity.Ldap.Abstractions.LdapEntry!>!>!
+Bielu.AspNetCore.Identity.Ldap.Abstractions.ILdapService.FindGroupByDnAsync(string! dn, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Bielu.AspNetCore.Identity.Ldap.Abstractions.LdapEntry?>!
+Bielu.AspNetCore.Identity.Ldap.Abstractions.ILdapService.FindGroupByNameAsync(string! groupName, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Bielu.AspNetCore.Identity.Ldap.Abstractions.LdapEntry?>!
+Bielu.AspNetCore.Identity.Ldap.Abstractions.ILdapService.FindUserAsync(string! username, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Bielu.AspNetCore.Identity.Ldap.Abstractions.LdapEntry?>!
+Bielu.AspNetCore.Identity.Ldap.Abstractions.ILdapService.FindUserByDnAsync(string! dn, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Bielu.AspNetCore.Identity.Ldap.Abstractions.LdapEntry?>!
+Bielu.AspNetCore.Identity.Ldap.Abstractions.ILdapService.FindUsersAsync(string! filter, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<Bielu.AspNetCore.Identity.Ldap.Abstractions.LdapEntry!>!>!
+Bielu.AspNetCore.Identity.Ldap.Abstractions.ILdapService.GetUserGroupsAsync(string! userDn, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<Bielu.AspNetCore.Identity.Ldap.Abstractions.LdapEntry!>!>!
+Bielu.AspNetCore.Identity.Ldap.Abstractions.ILdapService.ValidateCredentialsAsync(string! username, string! password, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<bool>!
+Bielu.AspNetCore.Identity.Ldap.Abstractions.LdapEntry
+Bielu.AspNetCore.Identity.Ldap.Abstractions.LdapEntry.Attributes.get -> System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyList<string!>!>!
+Bielu.AspNetCore.Identity.Ldap.Abstractions.LdapEntry.Attributes.init -> void
+Bielu.AspNetCore.Identity.Ldap.Abstractions.LdapEntry.Dn.get -> string!
+Bielu.AspNetCore.Identity.Ldap.Abstractions.LdapEntry.Dn.init -> void
+Bielu.AspNetCore.Identity.Ldap.Abstractions.LdapEntry.GetAttribute(string! name) -> string?
+Bielu.AspNetCore.Identity.Ldap.Abstractions.LdapEntry.LdapEntry() -> void
+Bielu.AspNetCore.Identity.Ldap.Extensions.LdapIdentityServiceCollectionExtensions
+static Bielu.AspNetCore.Identity.Ldap.Extensions.LdapIdentityServiceCollectionExtensions.AddLdapIdentity(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionName = "Ldap") -> Microsoft.AspNetCore.Identity.IdentityBuilder!
+static Bielu.AspNetCore.Identity.Ldap.Extensions.LdapIdentityServiceCollectionExtensions.AddLdapIdentity(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Bielu.AspNetCore.Identity.Ldap.LdapOptions!>! configureOptions) -> Microsoft.AspNetCore.Identity.IdentityBuilder!
+static Bielu.AspNetCore.Identity.Ldap.Extensions.LdapIdentityServiceCollectionExtensions.AddLdapServices(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionName = "Ldap") -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Bielu.AspNetCore.Identity.Ldap.Extensions.LdapIdentityServiceCollectionExtensions.AddLdapServices(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Bielu.AspNetCore.Identity.Ldap.LdapOptions!>! configureOptions) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Bielu.AspNetCore.Identity.Ldap.Extensions.LdapIdentityServiceCollectionExtensions.AddLdapStores(this Microsoft.AspNetCore.Identity.IdentityBuilder! builder, Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionName = "Ldap") -> Microsoft.AspNetCore.Identity.IdentityBuilder!
+static Bielu.AspNetCore.Identity.Ldap.Extensions.LdapIdentityServiceCollectionExtensions.AddLdapStores(this Microsoft.AspNetCore.Identity.IdentityBuilder! builder, System.Action<Bielu.AspNetCore.Identity.Ldap.LdapOptions!>! configureOptions) -> Microsoft.AspNetCore.Identity.IdentityBuilder!
+Bielu.AspNetCore.Identity.Ldap.LdapOptions
+Bielu.AspNetCore.Identity.Ldap.LdapOptions.BindDn.get -> string?
+Bielu.AspNetCore.Identity.Ldap.LdapOptions.BindDn.set -> void
+Bielu.AspNetCore.Identity.Ldap.LdapOptions.BindPassword.get -> string?
+Bielu.AspNetCore.Identity.Ldap.LdapOptions.BindPassword.set -> void
+Bielu.AspNetCore.Identity.Ldap.LdapOptions.ConnectionTimeoutSeconds.get -> int
+Bielu.AspNetCore.Identity.Ldap.LdapOptions.ConnectionTimeoutSeconds.set -> void
+Bielu.AspNetCore.Identity.Ldap.LdapOptions.DisplayNameAttribute.get -> string!
+Bielu.AspNetCore.Identity.Ldap.LdapOptions.DisplayNameAttribute.set -> void
+Bielu.AspNetCore.Identity.Ldap.LdapOptions.EmailAttribute.get -> string!
+Bielu.AspNetCore.Identity.Ldap.LdapOptions.EmailAttribute.set -> void
+Bielu.AspNetCore.Identity.Ldap.LdapOptions.GroupNameAttribute.get -> string!
+Bielu.AspNetCore.Identity.Ldap.LdapOptions.GroupNameAttribute.set -> void
+Bielu.AspNetCore.Identity.Ldap.LdapOptions.GroupSearchBase.get -> string!
+Bielu.AspNetCore.Identity.Ldap.LdapOptions.GroupSearchBase.set -> void
+Bielu.AspNetCore.Identity.Ldap.LdapOptions.GroupSearchFilter.get -> string!
+Bielu.AspNetCore.Identity.Ldap.LdapOptions.GroupSearchFilter.set -> void
+Bielu.AspNetCore.Identity.Ldap.LdapOptions.GroupListFilter.get -> string!
+Bielu.AspNetCore.Identity.Ldap.LdapOptions.GroupListFilter.set -> void
+Bielu.AspNetCore.Identity.Ldap.LdapOptions.Host.get -> string!
+Bielu.AspNetCore.Identity.Ldap.LdapOptions.Host.set -> void
+Bielu.AspNetCore.Identity.Ldap.LdapOptions.LdapOptions() -> void
+Bielu.AspNetCore.Identity.Ldap.LdapOptions.Port.get -> int
+Bielu.AspNetCore.Identity.Ldap.LdapOptions.Port.set -> void
+const Bielu.AspNetCore.Identity.Ldap.LdapOptions.SectionName = "Ldap" -> string!
+Bielu.AspNetCore.Identity.Ldap.LdapOptions.UserSearchBase.get -> string!
+Bielu.AspNetCore.Identity.Ldap.LdapOptions.UserSearchBase.set -> void
+Bielu.AspNetCore.Identity.Ldap.LdapOptions.UserSearchFilter.get -> string!
+Bielu.AspNetCore.Identity.Ldap.LdapOptions.UserSearchFilter.set -> void
+Bielu.AspNetCore.Identity.Ldap.LdapOptions.UsernameAttribute.get -> string!
+Bielu.AspNetCore.Identity.Ldap.LdapOptions.UsernameAttribute.set -> void
+Bielu.AspNetCore.Identity.Ldap.LdapOptions.UsesSsl.get -> bool
+Bielu.AspNetCore.Identity.Ldap.LdapOptions.UsesSsl.set -> void
+Bielu.AspNetCore.Identity.Ldap.LdapRole
+Bielu.AspNetCore.Identity.Ldap.LdapRole.DistinguishedName.get -> string?
+Bielu.AspNetCore.Identity.Ldap.LdapRole.DistinguishedName.set -> void
+Bielu.AspNetCore.Identity.Ldap.LdapRole.LdapRole() -> void
+Bielu.AspNetCore.Identity.Ldap.LdapRole.LdapRole(string! roleName) -> void
+Bielu.AspNetCore.Identity.Ldap.LdapUser
+Bielu.AspNetCore.Identity.Ldap.LdapUser.DistinguishedName.get -> string?
+Bielu.AspNetCore.Identity.Ldap.LdapUser.DistinguishedName.set -> void
+Bielu.AspNetCore.Identity.Ldap.LdapUser.DisplayName.get -> string?
+Bielu.AspNetCore.Identity.Ldap.LdapUser.DisplayName.set -> void
+Bielu.AspNetCore.Identity.Ldap.LdapUser.LdapUser() -> void
+Bielu.AspNetCore.Identity.Ldap.Stores.LdapRoleStore
+Bielu.AspNetCore.Identity.Ldap.Stores.LdapRoleStore.CreateAsync(Bielu.AspNetCore.Identity.Ldap.LdapRole! role, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Microsoft.AspNetCore.Identity.IdentityResult!>!
+Bielu.AspNetCore.Identity.Ldap.Stores.LdapRoleStore.DeleteAsync(Bielu.AspNetCore.Identity.Ldap.LdapRole! role, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Microsoft.AspNetCore.Identity.IdentityResult!>!
+Bielu.AspNetCore.Identity.Ldap.Stores.LdapRoleStore.Dispose() -> void
+Bielu.AspNetCore.Identity.Ldap.Stores.LdapRoleStore.FindByIdAsync(string! roleId, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Bielu.AspNetCore.Identity.Ldap.LdapRole?>!
+Bielu.AspNetCore.Identity.Ldap.Stores.LdapRoleStore.FindByNameAsync(string! normalizedRoleName, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Bielu.AspNetCore.Identity.Ldap.LdapRole?>!
+Bielu.AspNetCore.Identity.Ldap.Stores.LdapRoleStore.GetNormalizedRoleNameAsync(Bielu.AspNetCore.Identity.Ldap.LdapRole! role, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<string?>!
+Bielu.AspNetCore.Identity.Ldap.Stores.LdapRoleStore.GetRoleIdAsync(Bielu.AspNetCore.Identity.Ldap.LdapRole! role, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<string!>!
+Bielu.AspNetCore.Identity.Ldap.Stores.LdapRoleStore.GetRoleNameAsync(Bielu.AspNetCore.Identity.Ldap.LdapRole! role, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<string?>!
+Bielu.AspNetCore.Identity.Ldap.Stores.LdapRoleStore.LdapRoleStore(Bielu.AspNetCore.Identity.Ldap.Abstractions.ILdapService! ldapService, Microsoft.Extensions.Options.IOptionsMonitor<Bielu.AspNetCore.Identity.Ldap.LdapOptions!>! options) -> void
+Bielu.AspNetCore.Identity.Ldap.Stores.LdapRoleStore.SetNormalizedRoleNameAsync(Bielu.AspNetCore.Identity.Ldap.LdapRole! role, string? normalizedName, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+Bielu.AspNetCore.Identity.Ldap.Stores.LdapRoleStore.SetRoleNameAsync(Bielu.AspNetCore.Identity.Ldap.LdapRole! role, string? roleName, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+Bielu.AspNetCore.Identity.Ldap.Stores.LdapRoleStore.UpdateAsync(Bielu.AspNetCore.Identity.Ldap.LdapRole! role, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Microsoft.AspNetCore.Identity.IdentityResult!>!
+Bielu.AspNetCore.Identity.Ldap.Stores.LdapUserStore
+Bielu.AspNetCore.Identity.Ldap.Stores.LdapUserStore.CreateAsync(Bielu.AspNetCore.Identity.Ldap.LdapUser! user, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Microsoft.AspNetCore.Identity.IdentityResult!>!
+Bielu.AspNetCore.Identity.Ldap.Stores.LdapUserStore.DeleteAsync(Bielu.AspNetCore.Identity.Ldap.LdapUser! user, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Microsoft.AspNetCore.Identity.IdentityResult!>!
+Bielu.AspNetCore.Identity.Ldap.Stores.LdapUserStore.Dispose() -> void
+Bielu.AspNetCore.Identity.Ldap.Stores.LdapUserStore.FindByEmailAsync(string! normalizedEmail, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Bielu.AspNetCore.Identity.Ldap.LdapUser?>!
+Bielu.AspNetCore.Identity.Ldap.Stores.LdapUserStore.FindByIdAsync(string! userId, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Bielu.AspNetCore.Identity.Ldap.LdapUser?>!
+Bielu.AspNetCore.Identity.Ldap.Stores.LdapUserStore.FindByNameAsync(string! normalizedUserName, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Bielu.AspNetCore.Identity.Ldap.LdapUser?>!
+Bielu.AspNetCore.Identity.Ldap.Stores.LdapUserStore.GetEmailAsync(Bielu.AspNetCore.Identity.Ldap.LdapUser! user, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<string?>!
+Bielu.AspNetCore.Identity.Ldap.Stores.LdapUserStore.GetEmailConfirmedAsync(Bielu.AspNetCore.Identity.Ldap.LdapUser! user, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>!
+Bielu.AspNetCore.Identity.Ldap.Stores.LdapUserStore.GetNormalizedEmailAsync(Bielu.AspNetCore.Identity.Ldap.LdapUser! user, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<string?>!
+Bielu.AspNetCore.Identity.Ldap.Stores.LdapUserStore.GetNormalizedUserNameAsync(Bielu.AspNetCore.Identity.Ldap.LdapUser! user, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<string?>!
+Bielu.AspNetCore.Identity.Ldap.Stores.LdapUserStore.GetPasswordHashAsync(Bielu.AspNetCore.Identity.Ldap.LdapUser! user, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<string?>!
+Bielu.AspNetCore.Identity.Ldap.Stores.LdapUserStore.GetUserIdAsync(Bielu.AspNetCore.Identity.Ldap.LdapUser! user, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<string!>!
+Bielu.AspNetCore.Identity.Ldap.Stores.LdapUserStore.GetUserNameAsync(Bielu.AspNetCore.Identity.Ldap.LdapUser! user, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<string?>!
+Bielu.AspNetCore.Identity.Ldap.Stores.LdapUserStore.HasPasswordAsync(Bielu.AspNetCore.Identity.Ldap.LdapUser! user, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<bool>!
+Bielu.AspNetCore.Identity.Ldap.Stores.LdapUserStore.LdapUserStore(Bielu.AspNetCore.Identity.Ldap.Abstractions.ILdapService! ldapService, Microsoft.Extensions.Options.IOptionsMonitor<Bielu.AspNetCore.Identity.Ldap.LdapOptions!>! options) -> void
+Bielu.AspNetCore.Identity.Ldap.Stores.LdapUserStore.SetEmailAsync(Bielu.AspNetCore.Identity.Ldap.LdapUser! user, string? email, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+Bielu.AspNetCore.Identity.Ldap.Stores.LdapUserStore.SetEmailConfirmedAsync(Bielu.AspNetCore.Identity.Ldap.LdapUser! user, bool confirmed, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+Bielu.AspNetCore.Identity.Ldap.Stores.LdapUserStore.SetNormalizedEmailAsync(Bielu.AspNetCore.Identity.Ldap.LdapUser! user, string? normalizedEmail, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+Bielu.AspNetCore.Identity.Ldap.Stores.LdapUserStore.SetNormalizedUserNameAsync(Bielu.AspNetCore.Identity.Ldap.LdapUser! user, string? normalizedName, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+Bielu.AspNetCore.Identity.Ldap.Stores.LdapUserStore.SetPasswordHashAsync(Bielu.AspNetCore.Identity.Ldap.LdapUser! user, string? passwordHash, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+Bielu.AspNetCore.Identity.Ldap.Stores.LdapUserStore.SetUserNameAsync(Bielu.AspNetCore.Identity.Ldap.LdapUser! user, string? userName, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+Bielu.AspNetCore.Identity.Ldap.Stores.LdapUserStore.UpdateAsync(Bielu.AspNetCore.Identity.Ldap.LdapUser! user, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<Microsoft.AspNetCore.Identity.IdentityResult!>!

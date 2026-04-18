@@ -1,0 +1,44 @@
+@page "/"
+
+<PageTitle>Home</PageTitle>
+
+<h1>Hybrid Authentication Example</h1>
+
+<p>
+    This Blazor Web App demonstrates three authentication sources working together
+    with a single ASP.NET Core Identity user store (Entity Framework + SQLite):
+</p>
+
+<ul>
+    <li><strong>Local accounts</strong> — register &amp; sign in with a username/password stored in the local database.</li>
+    <li><strong>LDAP</strong> — authenticate against a corporate LDAP directory. A local account is auto-provisioned on first login.</li>
+    <li><strong>Microsoft Entra ID</strong> — sign in via OpenID Connect (SSO). A local account is auto-provisioned on first login.</li>
+</ul>
+
+<h3>How it works</h3>
+
+<ol>
+    <li>
+        <code>AddIdentity&lt;ApplicationUser, IdentityRole&gt;()</code> +
+        <code>AddEntityFrameworkStores&lt;ApplicationDbContext&gt;()</code>
+        — EF Core owns the Identity stores (users, roles, claims, tokens).
+    </li>
+    <li>
+        <code>AddLdapServices(configuration)</code>
+        — registers <code>ILdapService</code> for credential validation <em>without</em> replacing the EF stores.
+    </li>
+    <li>
+        <code>AddOpenIdConnect("EntraId", ...)</code>
+        — adds Entra ID as an external OIDC provider. The <code>OnTokenValidated</code> callback
+        provisions a local user and signs in via <code>SignInManager</code>.
+    </li>
+    <li>
+        <code>HybridSignInService</code>
+        — tries LDAP first, then falls back to local password on the login page.
+    </li>
+</ol>
+
+<p>
+    <a href="/login">👉 Go to Login</a> |
+    <a href="/secure">🔒 Secure Page</a>
+</p>

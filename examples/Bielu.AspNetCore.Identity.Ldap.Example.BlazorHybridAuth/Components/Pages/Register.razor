@@ -1,0 +1,105 @@
+@page "/register"
+@using Bielu.AspNetCore.Identity.Ldap.Example.BlazorHybridAuth.Data
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+@inject NavigationManager Navigation
+@inject ILogger<Register> Logger
+
+<PageTitle>Register</PageTitle>
+
+<h1>Register a Local Account</h1>
+
+@if (_errors.Count > 0)
+{
+    <div style="color: red; margin-bottom: 1rem;">
+        @foreach (var error in _errors)
+        {
+            <p>⚠️ @error</p>
+        }
+    </div>
+}
+
+@if (_success)
+{
+    <p style="color: green;">✅ Account created! Please <a href="/login">sign in</a>.</p>
+}
+
+<div style="max-width: 400px;">
+    <div style="margin-bottom: 0.5rem;">
+        <label>Username</label><br />
+        <input @bind="_username" style="width: 100%; padding: 0.4rem;" />
+    </div>
+    <div style="margin-bottom: 0.5rem;">
+        <label>Email</label><br />
+        <input type="email" @bind="_email" style="width: 100%; padding: 0.4rem;" />
+    </div>
+    <div style="margin-bottom: 0.5rem;">
+        <label>Password</label><br />
+        <input type="password" @bind="_password" style="width: 100%; padding: 0.4rem;" />
+    </div>
+    <div style="margin-bottom: 0.5rem;">
+        <label>Confirm Password</label><br />
+        <input type="password" @bind="_confirmPassword" style="width: 100%; padding: 0.4rem;" />
+    </div>
+
+    <button @onclick="RegisterAsync" disabled="@_loading" style="padding: 0.5rem 1.5rem;">
+        @(_loading ? "Creating…" : "Create Account")
+    </button>
+</div>
+
+@code {
+    private string _username = string.Empty;
+    private string _email = string.Empty;
+    private string _password = string.Empty;
+    private string _confirmPassword = string.Empty;
+    private List<string> _errors = [];
+    private bool _success;
+    private bool _loading;
+
+    private async Task RegisterAsync()
+    {
+        _errors.Clear();
+        _success = false;
+        _loading = true;
+
+        try
+        {
+            if (_password != _confirmPassword)
+            {
+                _errors.Add("Passwords do not match.");
+                return;
+            }
+
+            var user = new ApplicationUser
+            {
+                UserName = _username,
+                Email = _email,
+                AuthenticationSource = "Local",
+            };
+
+            var result = await UserManager.CreateAsync(user, _password);
+
+            if (result.Succeeded)
+            {
+                _success = true;
+                // Sign-in requires writing auth cookies to the HTTP response, which
+                // cannot be done from an interactive Blazor Server component. Redirect
+                // the user to the login page instead.
+                Navigation.NavigateTo("/login", forceLoad: true);
+            }
+            else
+            {
+                _errors.AddRange(result.Errors.Select(e => e.Description));
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Unexpected error during user registration");
+            _errors.Add("An unexpected error occurred. Please try again.");
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+}
