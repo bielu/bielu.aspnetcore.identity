@@ -1,5 +1,6 @@
 using Bielu.AspNetCore.Identity.Ldap.Example.BlazorHybridAuth.Data;
 using Bielu.AspNetCore.Identity.Ldap.Example.BlazorHybridAuth.Services;
+using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 
@@ -26,6 +27,11 @@ public static class AuthEndpoints
         // @onclick handlers. This POST endpoint handles the form submission.
         app.MapPost("/login", async (HttpContext ctx) =>
         {
+            if (!await ValidateAntiforgeryAsync(ctx))
+            {
+                return;
+            }
+
             var form = await ctx.Request.ReadFormAsync();
             var username = form["username"].ToString();
             var password = form["password"].ToString();
@@ -56,6 +62,11 @@ public static class AuthEndpoints
         // ── Sign-out (POST to prevent CSRF via link) ─────────────────
         app.MapPost("/logout", async (HttpContext ctx) =>
         {
+            if (!await ValidateAntiforgeryAsync(ctx))
+            {
+                return;
+            }
+
             var signInManager = ctx.RequestServices
                 .GetRequiredService<SignInManager<ApplicationUser>>();
 
@@ -64,5 +75,21 @@ public static class AuthEndpoints
         }).AllowAnonymous();
 
         return app;
+    }
+
+    /// <summary>
+    /// Validates the antiforgery token for the current request.
+    /// Returns <c>false</c> and writes a 400 response if validation fails.
+    /// </summary>
+    private static async Task<bool> ValidateAntiforgeryAsync(HttpContext ctx)
+    {
+        var antiforgery = ctx.RequestServices.GetRequiredService<IAntiforgery>();
+        if (!await antiforgery.IsRequestValidAsync(ctx))
+        {
+            ctx.Response.StatusCode = StatusCodes.Status400BadRequest;
+            return false;
+        }
+
+        return true;
     }
 }
