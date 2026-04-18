@@ -1,4 +1,5 @@
 using Bielu.AspNetCore.Identity.Ldap.Abstractions;
+using Bielu.AspNetCore.Identity.Ldap.Internal;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 
@@ -75,7 +76,7 @@ public sealed class LdapUserStore : IUserStore<LdapUser>,
         ArgumentNullException.ThrowIfNull(normalizedUserName);
 
         var entry = await _ldapService
-            .FindUserAsync(normalizedUserName.ToLowerInvariant(), cancellationToken)
+            .FindUserAsync(normalizedUserName, cancellationToken)
             .ConfigureAwait(false);
 
         return entry is null ? null : MapToUser(entry);
@@ -172,7 +173,7 @@ public sealed class LdapUserStore : IUserStore<LdapUser>,
             System.Globalization.CultureInfo.InvariantCulture,
             "(&(objectClass=person)({0}={1}))",
             _optionsMonitor.CurrentValue.EmailAttribute,
-            normalizedEmail.ToLowerInvariant());
+            LdapFilterHelper.EscapeLdapFilter(normalizedEmail.ToLowerInvariant()));
 
         var entries = await _ldapService.FindUsersAsync(filter, cancellationToken).ConfigureAwait(false);
         return entries.Count > 0 ? MapToUser(entries[0]) : null;

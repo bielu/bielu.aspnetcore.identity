@@ -43,9 +43,9 @@ public sealed class LdapIntegrationFixture : IDisposable
     {
         Configuration = new ConfigurationBuilder()
             .AddJsonFile("appsettings.Integration.json", optional: true)
-            // Environment-variable overrides: prefix LDAP_ maps to the "Ldap" section.
-            // e.g. LDAP_Host=myserver  →  Ldap:Host=myserver
-            .AddEnvironmentVariables("LDAP_")
+            // Environment-variable overrides use the standard __ separator for
+            // nesting, e.g. Ldap__Host=myserver  →  Ldap:Host=myserver
+            .AddEnvironmentVariables()
             .Build();
 
         Settings = new IntegrationSettings();
@@ -75,8 +75,8 @@ public sealed class LdapIntegrationFixture : IDisposable
     }
 
     /// <summary>
-    /// Throws <see cref="SkipException"/> when the LDAP server is unavailable
-    /// so the test is marked as skipped rather than failed.
+    /// Throws an exception recognised by xUnit as a dynamic skip when the LDAP
+    /// server is unavailable, so the test is marked as skipped rather than failed.
     /// </summary>
     public void SkipIfUnavailable()
     {
@@ -86,7 +86,7 @@ public sealed class LdapIntegrationFixture : IDisposable
                 "LDAP integration tests are skipped. " +
                 "Set the environment variable LDAP_INTEGRATION=true and ensure the LDAP server " +
                 $"configured under '{LdapOptions.SectionName}' in appsettings.Integration.json " +
-                "(or via LDAP_ env vars) is reachable.");
+                "(or via Ldap__* env vars) is reachable.");
         }
     }
 
@@ -118,10 +118,14 @@ public sealed class LdapIntegrationFixture : IDisposable
 
 /// <summary>
 /// Thrown by <see cref="LdapIntegrationFixture.SkipIfUnavailable"/> to signal xUnit
-/// that a test should be skipped.
+/// that a test should be skipped.  The message is prefixed with the well-known
+/// <c>$XunitDynamicSkip$</c> token so xUnit v2 reports the test as skipped rather
+/// than failed.
 /// </summary>
 public sealed class SkipException : Exception
 {
+    private const string SkipPrefix = "$XunitDynamicSkip$";
+
     /// <inheritdoc/>
-    public SkipException(string message) : base(message) { }
+    public SkipException(string message) : base($"{SkipPrefix} {message}") { }
 }

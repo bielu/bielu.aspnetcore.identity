@@ -43,7 +43,7 @@ public class LdapUserStoreTests
     public async Task FindByNameAsync_ReturnsUser_WhenFound()
     {
         var service = Substitute.For<ILdapService>();
-        service.FindUserAsync("jdoe", Arg.Any<CancellationToken>())
+        service.FindUserAsync("JDOE", Arg.Any<CancellationToken>())
                .Returns(UserEntry("jdoe", "jdoe@example.com", "John Doe"));
 
         var store = new LdapUserStore(service, CreateOptionsMonitor(DefaultOptions()));
@@ -61,7 +61,7 @@ public class LdapUserStoreTests
     public async Task FindByNameAsync_ReturnsNull_WhenNotFound()
     {
         var service = Substitute.For<ILdapService>();
-        service.FindUserAsync("ghost", Arg.Any<CancellationToken>())
+        service.FindUserAsync("GHOST", Arg.Any<CancellationToken>())
                .Returns((LdapEntry?)null);
 
         var store = new LdapUserStore(service, CreateOptionsMonitor(DefaultOptions()));

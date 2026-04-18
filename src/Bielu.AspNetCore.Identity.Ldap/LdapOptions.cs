@@ -74,6 +74,13 @@ public sealed class LdapOptions
     public string GroupSearchFilter { get; set; } = "(&(objectClass=groupOfNames)(member={0}))";
 
     /// <summary>
+    /// The LDAP search filter used to list all groups (e.g. for role enumeration).
+    /// Defaults to <c>(objectClass=groupOfNames)</c>.
+    /// Override with <c>(objectClass=group)</c> for Active Directory.
+    /// </summary>
+    public string GroupListFilter { get; set; } = "(objectClass=groupOfNames)";
+
+    /// <summary>
     /// The LDAP attribute that holds the user's e-mail address.
     /// Defaults to <c>mail</c>.
     /// </summary>

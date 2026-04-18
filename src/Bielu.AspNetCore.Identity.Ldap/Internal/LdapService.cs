@@ -92,8 +92,7 @@ internal sealed class LdapService : ILdapService
     /// <inheritdoc/>
     public Task<IReadOnlyList<LdapEntry>> FindGroupsAsync(CancellationToken cancellationToken = default)
     {
-        const string allGroupsFilter = "(objectClass=groupOfNames)";
-        return SearchAsync((_options.CurrentValue).GroupSearchBase, allGroupsFilter, cancellationToken);
+        return SearchAsync((_options.CurrentValue).GroupSearchBase, (_options.CurrentValue).GroupListFilter, cancellationToken);
     }
 
     /// <inheritdoc/>
@@ -179,6 +178,7 @@ internal sealed class LdapService : ILdapService
                     null,
                     null),
                 connection.EndSendRequest)
+            .WaitAsync(cancellationToken)
             .ConfigureAwait(false);
 
         var entries = new List<LdapEntry>(response.Entries.Count);
@@ -220,13 +220,6 @@ internal sealed class LdapService : ILdapService
     /// <summary>
     /// Escapes special characters in an LDAP filter value per RFC 4515.
     /// </summary>
-    private static string EscapeLdapFilter(string value)
-    {
-        return value
-            .Replace("\\", "\\5c", StringComparison.Ordinal)
-            .Replace("*", "\\2a", StringComparison.Ordinal)
-            .Replace("(", "\\28", StringComparison.Ordinal)
-            .Replace(")", "\\29", StringComparison.Ordinal)
-            .Replace("\0", "\\00", StringComparison.Ordinal);
-    }
+    private static string EscapeLdapFilter(string value) =>
+        LdapFilterHelper.EscapeLdapFilter(value);
 }

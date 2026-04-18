@@ -20,6 +20,7 @@ public class LdapOptionsTests
         options.UserSearchFilter.ShouldBe("(&(objectClass=person)(uid={0}))");
         options.GroupSearchBase.ShouldBe(string.Empty);
         options.GroupSearchFilter.ShouldBe("(&(objectClass=groupOfNames)(member={0}))");
+        options.GroupListFilter.ShouldBe("(objectClass=groupOfNames)");
         options.EmailAttribute.ShouldBe("mail");
         options.UsernameAttribute.ShouldBe("uid");
         options.DisplayNameAttribute.ShouldBe("cn");

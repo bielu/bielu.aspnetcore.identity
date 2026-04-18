@@ -37,6 +37,8 @@ Bielu.AspNetCore.Identity.Ldap.LdapOptions.GroupSearchBase.get -> string!
 Bielu.AspNetCore.Identity.Ldap.LdapOptions.GroupSearchBase.set -> void
 Bielu.AspNetCore.Identity.Ldap.LdapOptions.GroupSearchFilter.get -> string!
 Bielu.AspNetCore.Identity.Ldap.LdapOptions.GroupSearchFilter.set -> void
+Bielu.AspNetCore.Identity.Ldap.LdapOptions.GroupListFilter.get -> string!
+Bielu.AspNetCore.Identity.Ldap.LdapOptions.GroupListFilter.set -> void
 Bielu.AspNetCore.Identity.Ldap.LdapOptions.Host.get -> string!
 Bielu.AspNetCore.Identity.Ldap.LdapOptions.Host.set -> void
 Bielu.AspNetCore.Identity.Ldap.LdapOptions.LdapOptions() -> void

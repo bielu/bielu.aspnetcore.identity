@@ -95,7 +95,13 @@ builder.Services
                         AuthenticationSource = "EntraId",
                     };
 
-                    await userManager.CreateAsync(user);
+                    var createResult = await userManager.CreateAsync(user);
+                    if (!createResult.Succeeded)
+                    {
+                        var errors = string.Join("; ", createResult.Errors.Select(e => e.Description));
+                        ctx.Fail($"Failed to provision local account: {errors}");
+                        return;
+                    }
                 }
 
                 // Sign in with Identity so the cookie is issued under the
