@@ -249,64 +249,34 @@ app.Run();
 
 **Components/Pages/Login.razor:**
 
+> **Note:** In a Blazor interactive-server component, `SignInManager.PasswordSignInAsync`
+> cannot set the auth cookie (the HTTP response has already started over SignalR).
+> The recommended pattern is to POST to a minimal API endpoint that sets the cookie,
+> then redirect — see the example app's `AuthEndpoints.cs` and `Login.razor` for a
+> working implementation.
+
 ```razor
 @page "/login"
-@using Bielu.AspNetCore.Identity.Ldap
-@using Microsoft.AspNetCore.Identity
-@inject SignInManager<LdapUser> SignInManager
 @inject NavigationManager Navigation
 
 <PageTitle>Login</PageTitle>
 
 <h3>LDAP Login</h3>
 
-<EditForm Model="@loginModel" OnValidSubmit="HandleLogin" FormName="login">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+<form method="post" action="/login">
+    <AntiforgeryToken />
 
     <div class="mb-3">
         <label>Username</label>
-        <InputText @bind-Value="loginModel.Username" class="form-control" />
+        <input name="username" class="form-control" />
     </div>
     <div class="mb-3">
         <label>Password</label>
-        <InputText @bind-Value="loginModel.Password" type="password" class="form-control" />
+        <input name="password" type="password" class="form-control" />
     </div>
 
-    @if (!string.IsNullOrEmpty(errorMessage))
-    {
-        <div class="alert alert-danger">@errorMessage</div>
-    }
-
     <button type="submit" class="btn btn-primary">Sign In</button>
-</EditForm>
-
-@code {
-    private LoginModel loginModel = new();
-    private string? errorMessage;
-
-    private async Task HandleLogin()
-    {
-        var result = await SignInManager.PasswordSignInAsync(
-            loginModel.Username, loginModel.Password,
-            isPersistent: false, lockoutOnFailure: false);
-
-        if (result.Succeeded)
-        {
-            Navigation.NavigateTo("/", forceLoad: true);
-        }
-        else
-        {
-            errorMessage = "Invalid username or password.";
-        }
-    }
-
-    private sealed class LoginModel
-    {
-        public string Username { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
-    }
-}
+</form>
 ```
 
 **Components/Pages/SecurePage.razor:**
@@ -583,7 +553,7 @@ dotnet test test/Bielu.AspNetCore.Identity.Ldap.Tests
 Unit tests cover:
 - `LdapOptions` — defaults, section name constant, property assignment
 - `LdapEntry` — case-insensitive attribute lookup, null guards
-- `LdapUserStore` / `LdapRoleStore` — find, create, update, delete contract
+- `LdapUserStore` / `LdapRoleStore` — find/lookup behaviour, unsupported-operation guards for create/update/delete
 - `OpenTelemetryLdapServiceDecorator` — delegation, exception propagation, ActivitySource/Meter metadata
 - `ServiceRegistrationTests` — both `IConfiguration` and fluent API overloads, custom section keys, null guards, OTel decorator wrapping
 

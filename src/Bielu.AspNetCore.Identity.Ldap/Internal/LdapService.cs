@@ -56,7 +56,7 @@ internal sealed class LdapService : ILdapService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unexpected error while validating credentials for '{Username}'.", username);
-            return false;
+            throw;
         }
     }
 
@@ -93,6 +93,30 @@ internal sealed class LdapService : ILdapService
     public Task<IReadOnlyList<LdapEntry>> FindGroupsAsync(CancellationToken cancellationToken = default)
     {
         return SearchAsync((_options.CurrentValue).GroupSearchBase, (_options.CurrentValue).GroupListFilter, cancellationToken);
+    }
+
+    /// <inheritdoc/>
+    public Task<LdapEntry?> FindGroupByDnAsync(string dn, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(dn);
+
+        return SearchSingleAsync(dn, "(objectClass=*)", cancellationToken, SearchScope.Base);
+    }
+
+    /// <inheritdoc/>
+    public Task<LdapEntry?> FindGroupByNameAsync(string groupName, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(groupName);
+
+        var opts = _options.CurrentValue;
+        var filter = string.Format(
+            System.Globalization.CultureInfo.InvariantCulture,
+            "(&{0}({1}={2}))",
+            opts.GroupListFilter,
+            opts.GroupNameAttribute,
+            EscapeLdapFilter(groupName));
+
+        return SearchSingleAsync(opts.GroupSearchBase, filter, cancellationToken);
     }
 
     /// <inheritdoc/>

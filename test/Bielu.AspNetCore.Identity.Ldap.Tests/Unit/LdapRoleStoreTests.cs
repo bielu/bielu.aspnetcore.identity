@@ -39,8 +39,8 @@ public class LdapRoleStoreTests
     public async Task FindByNameAsync_ReturnsRole_WhenFound()
     {
         var service = Substitute.For<ILdapService>();
-        service.FindGroupsAsync(Arg.Any<CancellationToken>())
-               .Returns(new List<LdapEntry> { GroupEntry("admins") }.AsReadOnly());
+        service.FindGroupByNameAsync("ADMINS", Arg.Any<CancellationToken>())
+               .Returns(GroupEntry("admins"));
 
         var store = new LdapRoleStore(service, CreateOptionsMonitor(DefaultOptions()));
 
@@ -56,8 +56,8 @@ public class LdapRoleStoreTests
     public async Task FindByNameAsync_ReturnsNull_WhenNotFound()
     {
         var service = Substitute.For<ILdapService>();
-        service.FindGroupsAsync(Arg.Any<CancellationToken>())
-               .Returns(new List<LdapEntry>().AsReadOnly());
+        service.FindGroupByNameAsync("NOBODY", Arg.Any<CancellationToken>())
+               .Returns((LdapEntry?)null);
 
         var store = new LdapRoleStore(service, CreateOptionsMonitor(DefaultOptions()));
 
@@ -74,8 +74,8 @@ public class LdapRoleStoreTests
     public async Task FindByIdAsync_ReturnsRole_WhenFound()
     {
         var service = Substitute.For<ILdapService>();
-        service.FindGroupsAsync(Arg.Any<CancellationToken>())
-               .Returns(new List<LdapEntry> { GroupEntry("developers") }.AsReadOnly());
+        service.FindGroupByDnAsync("cn=developers,ou=groups,dc=example,dc=com", Arg.Any<CancellationToken>())
+               .Returns(GroupEntry("developers"));
 
         var store = new LdapRoleStore(service, CreateOptionsMonitor(DefaultOptions()));
 

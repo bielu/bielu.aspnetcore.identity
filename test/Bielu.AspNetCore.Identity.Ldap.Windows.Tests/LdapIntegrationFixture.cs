@@ -104,7 +104,14 @@ public sealed class LdapIntegrationFixture : IDisposable
             {
                 Timeout = TimeSpan.FromSeconds(5),
             };
-            connection.Bind(); // anonymous bind — just checks TCP connectivity
+
+            if (options.UsesSsl)
+            {
+                connection.SessionOptions.SecureSocketLayer = true;
+            }
+
+            connection.SessionOptions.ProtocolVersion = 3;
+            connection.Bind(); // anonymous bind — just checks connectivity
             return true;
         }
         catch

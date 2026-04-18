@@ -2,8 +2,8 @@
 @using Bielu.AspNetCore.Identity.Ldap.Example.BlazorHybridAuth.Data
 @using Microsoft.AspNetCore.Identity
 @inject UserManager<ApplicationUser> UserManager
-@inject SignInManager<ApplicationUser> SignInManager
 @inject NavigationManager Navigation
+@inject ILogger<Register> Logger
 
 <PageTitle>Register</PageTitle>
 
@@ -21,7 +21,7 @@
 
 @if (_success)
 {
-    <p style="color: green;">✅ Account created! Redirecting…</p>
+    <p style="color: green;">✅ Account created! Please <a href="/login">sign in</a>.</p>
 }
 
 <div style="max-width: 400px;">
@@ -82,8 +82,10 @@
             if (result.Succeeded)
             {
                 _success = true;
-                await SignInManager.SignInAsync(user, isPersistent: false);
-                Navigation.NavigateTo("/secure", forceLoad: true);
+                // Sign-in requires writing auth cookies to the HTTP response, which
+                // cannot be done from an interactive Blazor Server component. Redirect
+                // the user to the login page instead.
+                Navigation.NavigateTo("/login", forceLoad: true);
             }
             else
             {
@@ -92,7 +94,8 @@
         }
         catch (Exception ex)
         {
-            _errors.Add($"An error occurred: {ex.Message}");
+            Logger.LogError(ex, "Unexpected error during user registration");
+            _errors.Add("An unexpected error occurred. Please try again.");
         }
         finally
         {

@@ -136,15 +136,26 @@ public sealed class LdapUserStore : IUserStore<LdapUser>,
     // -----------------------------------------------------------------------
 
     /// <inheritdoc/>
+    /// <remarks>
+    /// LDAP passwords are not stored locally — they are validated via an LDAP bind
+    /// in <see cref="ILdapService.ValidateCredentialsAsync"/>. A sentinel hash is
+    /// returned so that ASP.NET Core Identity considers this user as having a password.
+    /// To integrate with <c>SignInManager.PasswordSignInAsync</c>, register a custom
+    /// <see cref="Microsoft.AspNetCore.Identity.IPasswordValidator{TUser}"/> that
+    /// delegates to <see cref="ILdapService.ValidateCredentialsAsync"/>, or use a
+    /// custom <see cref="Microsoft.AspNetCore.Identity.SignInManager{TUser}"/>.
+    /// </remarks>
     public Task<string?> GetPasswordHashAsync(LdapUser user, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(user);
-        // LDAP passwords are validated via bind; we return a sentinel so
-        // ASP.NET Core Identity treats this user as having a password.
         return Task.FromResult<string?>(user.PasswordHash);
     }
 
     /// <inheritdoc/>
+    /// <remarks>
+    /// Always returns <c>true</c> because LDAP users authenticate via directory bind,
+    /// not via a locally stored password hash.
+    /// </remarks>
     public Task<bool> HasPasswordAsync(LdapUser user, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(user);

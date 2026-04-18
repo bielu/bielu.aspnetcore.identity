@@ -28,13 +28,15 @@ public sealed class LdapOptions
     public string Host { get; set; } = "localhost";
 
     /// <summary>
-    /// The LDAP server port. Defaults to <c>389</c> (plain) or <c>636</c> (SSL).
+    /// The LDAP server port. Defaults to <c>389</c>.
+    /// If using LDAPS, set this to <c>636</c> and enable <see cref="UsesSsl"/>.
     /// </summary>
     public int Port { get; set; } = 389;
 
     /// <summary>
-    /// Whether to use SSL/TLS when connecting to the LDAP server.
-    /// When <c>true</c> the default port changes to <c>636</c>.
+    /// Whether to use SSL/TLS (LDAPS) when connecting to the LDAP server.
+    /// When set to <c>true</c>, also set <see cref="Port"/> to <c>636</c> (or your
+    /// LDAPS port). The port is not changed automatically.
     /// </summary>
     public bool UsesSsl { get; set; } = false;
 

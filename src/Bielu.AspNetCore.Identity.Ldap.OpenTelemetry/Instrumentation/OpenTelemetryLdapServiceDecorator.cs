@@ -52,6 +52,11 @@ public sealed class OpenTelemetryLdapServiceDecorator : ILdapService
 
             return result;
         }
+        catch (OperationCanceledException)
+        {
+            activity?.SetStatus(ActivityStatusCode.Error, "Cancelled");
+            throw;
+        }
         catch (Exception ex)
         {
             activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
@@ -84,6 +89,11 @@ public sealed class OpenTelemetryLdapServiceDecorator : ILdapService
             activity?.SetStatus(ActivityStatusCode.Ok);
             return result;
         }
+        catch (OperationCanceledException)
+        {
+            activity?.SetStatus(ActivityStatusCode.Error, "Cancelled");
+            throw;
+        }
         catch (Exception ex)
         {
             activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
@@ -115,6 +125,11 @@ public sealed class OpenTelemetryLdapServiceDecorator : ILdapService
             activity?.SetStatus(ActivityStatusCode.Ok);
             return result;
         }
+        catch (OperationCanceledException)
+        {
+            activity?.SetStatus(ActivityStatusCode.Error, "Cancelled");
+            throw;
+        }
         catch (Exception ex)
         {
             activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
@@ -145,6 +160,11 @@ public sealed class OpenTelemetryLdapServiceDecorator : ILdapService
             activity?.SetStatus(ActivityStatusCode.Ok);
             return result;
         }
+        catch (OperationCanceledException)
+        {
+            activity?.SetStatus(ActivityStatusCode.Error, "Cancelled");
+            throw;
+        }
         catch (Exception ex)
         {
             activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
@@ -173,6 +193,11 @@ public sealed class OpenTelemetryLdapServiceDecorator : ILdapService
             activity?.SetStatus(ActivityStatusCode.Ok);
             return result;
         }
+        catch (OperationCanceledException)
+        {
+            activity?.SetStatus(ActivityStatusCode.Error, "Cancelled");
+            throw;
+        }
         catch (Exception ex)
         {
             activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
@@ -185,6 +210,14 @@ public sealed class OpenTelemetryLdapServiceDecorator : ILdapService
             LdapMetrics.SearchDuration.Record(sw.Elapsed.TotalSeconds, new KeyValuePair<string, object?>("ldap.operation", LdapActivitySource.FindGroups));
         }
     }
+
+    /// <inheritdoc/>
+    public Task<LdapEntry?> FindGroupByDnAsync(string dn, CancellationToken cancellationToken = default)
+        => _inner.FindGroupByDnAsync(dn, cancellationToken);
+
+    /// <inheritdoc/>
+    public Task<LdapEntry?> FindGroupByNameAsync(string groupName, CancellationToken cancellationToken = default)
+        => _inner.FindGroupByNameAsync(groupName, cancellationToken);
 
     /// <inheritdoc/>
     public async Task<IReadOnlyList<LdapEntry>> GetUserGroupsAsync(
@@ -203,6 +236,11 @@ public sealed class OpenTelemetryLdapServiceDecorator : ILdapService
             activity?.SetTag(LdapActivitySource.AttributeResultCount, result.Count);
             activity?.SetStatus(ActivityStatusCode.Ok);
             return result;
+        }
+        catch (OperationCanceledException)
+        {
+            activity?.SetStatus(ActivityStatusCode.Error, "Cancelled");
+            throw;
         }
         catch (Exception ex)
         {

@@ -61,14 +61,26 @@
 @code {
     private string? _error;
 
+    // Only these well-known error keys (set by the POST /login endpoint) are shown.
+    // Arbitrary query-string values are not rendered to prevent phishing via crafted URLs.
+    private static readonly Dictionary<string, string> AllowedErrors = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["Username+and+password+are+required"] = "Username and password are required.",
+        ["Username and password are required"] = "Username and password are required.",
+        ["Invalid+username+or+password"] = "Invalid username or password.",
+        ["Invalid username or password"] = "Invalid username or password.",
+        ["Account+is+locked+out"] = "Account is locked out.",
+        ["Account is locked out"] = "Account is locked out.",
+    };
+
     protected override void OnInitialized()
     {
-        // Read error from query string (set by the POST /login endpoint on failure)
         var uri = Navigation.ToAbsoluteUri(Navigation.Uri);
         if (Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query)
                 .TryGetValue("error", out var errorValue))
         {
-            _error = errorValue.ToString();
+            var raw = errorValue.ToString();
+            _error = AllowedErrors.GetValueOrDefault(raw, "An error occurred during sign-in.");
         }
     }
 }

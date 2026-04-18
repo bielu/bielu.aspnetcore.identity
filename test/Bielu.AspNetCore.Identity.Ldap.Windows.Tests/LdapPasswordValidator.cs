@@ -7,6 +7,20 @@ namespace Bielu.AspNetCore.Identity.Ldap.Windows.Tests;
 /// An ASP.NET Core Identity <see cref="IPasswordValidator{TUser}"/> that validates
 /// passwords by performing an LDAP bind, delegating to <see cref="ILdapService"/>.
 /// </summary>
+/// <remarks>
+/// <para>
+/// Register this validator alongside <c>AddLdapStores</c> when using
+/// <c>SignInManager.PasswordSignInAsync</c> with <see cref="LdapUser"/>. The default
+/// Identity password-hasher flow (<c>IPasswordHasher&lt;LdapUser&gt;</c>) will not work
+/// because LDAP users do not have locally stored password hashes. This validator bridges
+/// that gap by delegating to <see cref="ILdapService.ValidateCredentialsAsync"/>.
+/// </para>
+/// <para>
+/// This class lives in the test project as a reference implementation. Production apps
+/// should register a similar validator via
+/// <c>builder.Services.AddTransient&lt;IPasswordValidator&lt;LdapUser&gt;, LdapPasswordValidator&gt;()</c>.
+/// </para>
+/// </remarks>
 internal sealed class LdapPasswordValidator : IPasswordValidator<LdapUser>
 {
     private readonly ILdapService _ldapService;

@@ -6,6 +6,15 @@ namespace Bielu.AspNetCore.Identity.Ldap.OpenTelemetry;
 /// <summary>
 /// Provides the <see cref="ActivitySource"/> used for tracing LDAP identity operations.
 /// </summary>
+/// <remarks>
+/// <para>
+/// The attribute keys <see cref="AttributeUsername"/> and <see cref="AttributeUserDn"/>
+/// may carry personally identifiable information (PII). They are recorded on
+/// individual spans (request-scoped), not on metrics. Operators should evaluate
+/// their data-retention policies and, if needed, configure their exporter to
+/// redact or drop these attributes before sending telemetry to long-lived backends.
+/// </para>
+/// </remarks>
 public static class LdapActivitySource
 {
     private static readonly AssemblyName AssemblyName =

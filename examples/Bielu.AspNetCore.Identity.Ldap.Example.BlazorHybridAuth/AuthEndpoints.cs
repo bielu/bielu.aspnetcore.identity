@@ -60,6 +60,9 @@ public static class AuthEndpoints
         }).AllowAnonymous();
 
         // ── Sign-out (POST to prevent CSRF via link) ─────────────────
+        // NOTE: This clears the local Identity cookie only. Users who authenticated
+        // via the EntraId OIDC provider will remain signed in at the IdP. To fully
+        // end the external session, issue an OpenID Connect SignOut request as well.
         app.MapPost("/logout", async (HttpContext ctx) =>
         {
             if (!await ValidateAntiforgeryAsync(ctx))

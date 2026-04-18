@@ -10,7 +10,7 @@ This Blazor Web App demonstrates how to mix **three authentication sources** wit
 
 ## Architecture
 
-```
+```text
 ┌────────────────────────────────────────────────────────┐
 │                    Blazor Web App                      │
 │                                                        │

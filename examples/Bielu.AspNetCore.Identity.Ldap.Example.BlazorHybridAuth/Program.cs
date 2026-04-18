@@ -140,7 +140,7 @@ app.UseAuthorization();
 app.UseAntiforgery();
 
 // ─────────────────────────────────────────────────────────────────────────
-//  Ensure the SQLite database exists and is migrated
+//  Ensure the SQLite database exists (uses EnsureCreated — no migrations)
 // ─────────────────────────────────────────────────────────────────────────
 using (var scope = app.Services.CreateScope())
 {

@@ -61,10 +61,8 @@ public sealed class LdapRoleStore : IRoleStore<LdapRole>
     {
         ArgumentNullException.ThrowIfNull(roleId);
 
-        // Role IDs are stored as Distinguished Names for uniqueness.
-        var entries = await _ldapService.FindGroupsAsync(cancellationToken).ConfigureAwait(false);
-        var entry = entries.FirstOrDefault(e =>
-            string.Equals(e.Dn, roleId, StringComparison.OrdinalIgnoreCase));
+        // Role IDs are stored as Distinguished Names — do a targeted base-scope search.
+        var entry = await _ldapService.FindGroupByDnAsync(roleId, cancellationToken).ConfigureAwait(false);
 
         return entry is null ? null : MapToRole(entry);
     }
@@ -74,12 +72,8 @@ public sealed class LdapRoleStore : IRoleStore<LdapRole>
     {
         ArgumentNullException.ThrowIfNull(normalizedRoleName);
 
-        var entries = await _ldapService.FindGroupsAsync(cancellationToken).ConfigureAwait(false);
-        var entry = entries.FirstOrDefault(e =>
-            string.Equals(
-                e.GetAttribute(_optionsMonitor.CurrentValue.GroupNameAttribute),
-                normalizedRoleName,
-                StringComparison.OrdinalIgnoreCase));
+        // Use a targeted server-side search by the group name attribute.
+        var entry = await _ldapService.FindGroupByNameAsync(normalizedRoleName, cancellationToken).ConfigureAwait(false);
 
         return entry is null ? null : MapToRole(entry);
     }
