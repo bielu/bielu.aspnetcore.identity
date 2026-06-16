@@ -17,7 +17,7 @@ public class LdapGroupSearchTests
         _fixture = fixture;
     }
 
-    [Fact]
+    [SkippableFact]
     public async Task FindGroupsAsync_ReturnsAtLeastOneGroup()
     {
         _fixture.SkipIfUnavailable();
@@ -28,7 +28,7 @@ public class LdapGroupSearchTests
         groups.Count.ShouldBeGreaterThan(0);
     }
 
-    [Fact]
+    [SkippableFact]
     public async Task FindGroupsAsync_ReturnsExpectedGroup_WhenConfigured()
     {
         _fixture.SkipIfUnavailable();
@@ -51,7 +51,7 @@ public class LdapGroupSearchTests
             $"Expected to find a group named '{expectedGroup}' in the directory.");
     }
 
-    [Fact]
+    [SkippableFact]
     public async Task GetUserGroupsAsync_ReturnsGroups_ForExistingUser()
     {
         _fixture.SkipIfUnavailable();
@@ -67,7 +67,7 @@ public class LdapGroupSearchTests
         groups.ShouldNotBeNull();
     }
 
-    [Fact]
+    [SkippableFact]
     public async Task GetUserGroupsAsync_ContainsExpectedGroup_WhenConfigured()
     {
         _fixture.SkipIfUnavailable();

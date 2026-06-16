@@ -4,6 +4,7 @@ using Bielu.AspNetCore.Identity.Ldap.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Xunit;
 
 namespace Bielu.AspNetCore.Identity.Ldap.Windows.Tests;
 
@@ -73,20 +74,17 @@ public sealed class LdapIntegrationFixture : IDisposable
     }
 
     /// <summary>
-    /// Throws an exception recognised by xUnit as a dynamic skip when the LDAP
-    /// server is unavailable, so the test is marked as skipped rather than failed.
+    /// Marks the current test as skipped (via <see cref="Skip"/>) when the LDAP
+    /// server is unavailable, so it is reported as skipped rather than failed.
+    /// Only effective on tests annotated with <c>[SkippableFact]</c>/<c>[SkippableTheory]</c>.
     /// </summary>
     public void SkipIfUnavailable()
-    {
-        if (!IsAvailable)
-        {
-            throw new SkipException(
-                "LDAP integration tests are skipped. " +
-                "Set the environment variable LDAP_INTEGRATION=true and ensure the LDAP server " +
-                $"configured under '{LdapOptions.SectionName}' in appsettings.Integration.json " +
-                "(or via Ldap__* env vars) is reachable.");
-        }
-    }
+        => Skip.IfNot(
+            IsAvailable,
+            "LDAP integration tests are skipped. " +
+            "Set the environment variable LDAP_INTEGRATION=true and ensure the LDAP server " +
+            $"configured under '{LdapOptions.SectionName}' in appsettings.Integration.json " +
+            "(or via Ldap__* env vars) is reachable.");
 
     /// <inheritdoc/>
     public void Dispose() => _provider.Dispose();
@@ -119,18 +117,4 @@ public sealed class LdapIntegrationFixture : IDisposable
             return false;
         }
     }
-}
-
-/// <summary>
-/// Thrown by <see cref="LdapIntegrationFixture.SkipIfUnavailable"/> to signal xUnit
-/// that a test should be skipped.  The message is prefixed with the well-known
-/// <c>$XunitDynamicSkip$</c> token so xUnit v2 reports the test as skipped rather
-/// than failed.
-/// </summary>
-public sealed class SkipException : Exception
-{
-    private const string SkipPrefix = "$XunitDynamicSkip$";
-
-    /// <inheritdoc/>
-    public SkipException(string message) : base($"{SkipPrefix} {message}") { }
 }

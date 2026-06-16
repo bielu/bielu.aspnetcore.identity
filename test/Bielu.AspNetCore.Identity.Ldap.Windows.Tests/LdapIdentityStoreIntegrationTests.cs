@@ -27,7 +27,7 @@ public class LdapIdentityStoreIntegrationTests
     // User store
     // -----------------------------------------------------------------------
 
-    [Fact]
+    [SkippableFact]
     public async Task UserStore_FindByNameAsync_ReturnsUser_ForExistingUser()
     {
         _fixture.SkipIfUnavailable();
@@ -41,7 +41,7 @@ public class LdapIdentityStoreIntegrationTests
         user.UserName.ShouldNotBeNullOrEmpty();
     }
 
-    [Fact]
+    [SkippableFact]
     public async Task UserStore_FindByEmailAsync_ReturnsUser_WhenEmailConfigured()
     {
         _fixture.SkipIfUnavailable();
@@ -60,7 +60,7 @@ public class LdapIdentityStoreIntegrationTests
         user.ShouldNotBeNull();
     }
 
-    [Fact]
+    [SkippableFact]
     public async Task UserStore_CheckPasswordAsync_ReturnsTrue_ForValidCredentials()
     {
         _fixture.SkipIfUnavailable();
@@ -80,7 +80,7 @@ public class LdapIdentityStoreIntegrationTests
         result.Succeeded.ShouldBeTrue();
     }
 
-    [Fact]
+    [SkippableFact]
     public async Task UserStore_CheckPasswordAsync_ReturnsFalse_ForWrongPassword()
     {
         _fixture.SkipIfUnavailable();
@@ -104,7 +104,7 @@ public class LdapIdentityStoreIntegrationTests
     // Role store
     // -----------------------------------------------------------------------
 
-    [Fact]
+    [SkippableFact]
     public async Task RoleStore_FindByNameAsync_ReturnsRole_WhenGroupConfigured()
     {
         _fixture.SkipIfUnavailable();

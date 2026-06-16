@@ -18,7 +18,7 @@ public class LdapCredentialValidationTests
         _fixture = fixture;
     }
 
-    [Fact]
+    [SkippableFact]
     public async Task ValidateCredentials_ReturnsTrue_ForValidUser()
     {
         _fixture.SkipIfUnavailable();
@@ -30,7 +30,7 @@ public class LdapCredentialValidationTests
         result.ShouldBeTrue();
     }
 
-    [Fact]
+    [SkippableFact]
     public async Task ValidateCredentials_ReturnsFalse_ForWrongPassword()
     {
         _fixture.SkipIfUnavailable();
@@ -48,7 +48,7 @@ public class LdapCredentialValidationTests
         result.ShouldBeFalse();
     }
 
-    [Fact]
+    [SkippableFact]
     public async Task ValidateCredentials_ReturnsFalse_ForNonExistentUser()
     {
         _fixture.SkipIfUnavailable();

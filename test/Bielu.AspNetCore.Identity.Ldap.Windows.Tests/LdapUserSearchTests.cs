@@ -16,7 +16,7 @@ public class LdapUserSearchTests
         _fixture = fixture;
     }
 
-    [Fact]
+    [SkippableFact]
     public async Task FindUserAsync_ReturnsEntry_ForExistingUser()
     {
         _fixture.SkipIfUnavailable();
@@ -28,7 +28,7 @@ public class LdapUserSearchTests
         entry.Dn.ShouldNotBeNullOrEmpty();
     }
 
-    [Fact]
+    [SkippableFact]
     public async Task FindUserAsync_ReturnsNull_ForNonExistentUser()
     {
         _fixture.SkipIfUnavailable();
@@ -38,7 +38,7 @@ public class LdapUserSearchTests
         entry.ShouldBeNull();
     }
 
-    [Fact]
+    [SkippableFact]
     public async Task FindUserAsync_PopulatesExpectedAttributes()
     {
         _fixture.SkipIfUnavailable();
@@ -67,7 +67,7 @@ public class LdapUserSearchTests
         }
     }
 
-    [Fact]
+    [SkippableFact]
     public async Task FindUserByDnAsync_ReturnsEntry_ForExistingDn()
     {
         _fixture.SkipIfUnavailable();
@@ -84,7 +84,7 @@ public class LdapUserSearchTests
         byDn.Dn.ShouldBe(byName.Dn);
     }
 
-    [Fact]
+    [SkippableFact]
     public async Task FindUsersAsync_ReturnsNonEmptyList_WithBroadFilter()
     {
         _fixture.SkipIfUnavailable();
