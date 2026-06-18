@@ -14,8 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Bielu.AspNetCore.Identity.Ldap\Bielu.AspNetCore.Identity.Ldap.csproj" />
-    <ProjectReference Include="..\..\src\Bielu.AspNetCore.Identity.Ldap.OpenTelemetry\Bielu.AspNetCore.Identity.Ldap.OpenTelemetry.csproj" />
+    <ProjectReference Include="..\..\Bielu.AspNetCore.Identity.Ldap\Bielu.AspNetCore.Identity.Ldap.csproj" />
+    <ProjectReference Include="..\..\Bielu.AspNetCore.Identity.Ldap.OpenTelemetry\Bielu.AspNetCore.Identity.Ldap.OpenTelemetry.csproj" />
   </ItemGroup>
 
   <ItemGroup>
